@@ -57,7 +57,6 @@ btvoccu <- function(niter,
 
   # models
   if(is.null(M)){ # without spatial random effect
-    s
     # samplers
     gibbs_logit_btvoccu <- function(niter,
                                     y,
@@ -73,7 +72,6 @@ btvoccu <- function(niter,
 
       # local functions
       mvn_update <- function(y, X, beta, mubeta, Sigmabeta){
-
         # sample augmented variable
         ya <- rep(NA, length(y))
         for(i in 1:length(y)){
