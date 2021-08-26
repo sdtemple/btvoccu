@@ -217,7 +217,7 @@ posterior_vars <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.0
 #' trace_plot(mdl, "alphas", 1, 0)
 #'
 #' @export
-trace_plot <- function(model, effects, mnridx, burnin = .5){
+plot_trace <- function(model, effects, mnridx, burnin = .5){
   
   mjridx <- which(names(model) == effects, arr.ind = T)
   colors <- rainbow(model$nchains)
@@ -571,7 +571,7 @@ posterior_sigmoids <- function(model, x,
 #' @param pre numeric array: presence probabilities
 #'
 #' @return binary array
-ry <- function(pre){
+rpresence <- function(pre){
   yrep <- array(NA, dim = c(dim(pre)[1:3], 1),
                 dimnames = list(dimnames(pre)[[1]],
                                 dimnames(pre)[[2]],
@@ -610,15 +610,16 @@ ry <- function(pre){
 #' @return list
 #'
 #' @export
-posterior_simulate <- function(model, x, y = NULL,
-                               sites = NULL,
-                               seasons = NULL,
-                               periods = NULL,
-                               nrep = 1000,
-                               ndraws = 1000,
-                               burnin = .5,
-                               thin = 1){
-  
+posterior_check <- function(model, 
+                            x, y = NULL,
+                            sites = NULL,
+                            seasons = NULL,
+                            periods = NULL,
+                            nrep = 1000,
+                            ndraws = 1000,
+                            burnin = .5,
+                            thin = 1){
+                               
   # get data indices
   if(is.null(sites)){
     sites <- model$sites
@@ -681,7 +682,7 @@ posterior_simulate <- function(model, x, y = NULL,
   # simulate presence-absence data
   yreppre <- rep(NA, nrep)
   for(n in 1:nrep){
-    yrep <- ry(sigmoids$Presence)
+    yrep <- rpresence(sigmoids$Presence)
     yreppre[n] <- sum(apply(yrep, 1, sum, na.rm = T))
   }
   
@@ -777,7 +778,7 @@ btvoccu_predict <- function(model, x,
                             burnin = .5,
                             thin = 1,
                             credible = c(.025,.5,.975),
-                            ndraws = 1000
+                            ndraws = 1000,
                             spline = TRUE,
                             spline.predict = FALSE,
                             nknots = 5){
@@ -886,7 +887,7 @@ btvoccu_predict <- function(model, x,
 #' @return \code{ggplot} object
 #'
 #' @export
-btvoccu_plot <- function(model,
+plot_btvoccu <- function(model,
                          x,
                          sites,
                          season,
@@ -897,7 +898,7 @@ btvoccu_plot <- function(model,
                          credible = c(.025,.5,.975),
                          ndraws = 1000,
                          ribbons = TRUE,
-                         dots = FALSE
+                         dots = FALSE,
                          spline = FALSE,
                          spline.predict = FALSE,
                          nknots = 5,
@@ -978,7 +979,7 @@ btvoccu_plot <- function(model,
 #' @return \code{ggplot} object
 #'
 #' @export
-covariate_plot <- function(x,
+plot_covariate <- function(x,
                            sites,
                            season,
                            periods,

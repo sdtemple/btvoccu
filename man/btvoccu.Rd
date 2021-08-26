@@ -2,7 +2,7 @@
 % Please edit documentation in R/btvoccu.R
 \name{btvoccu}
 \alias{btvoccu}
-\title{Bayesian Time-Varying Occupancy Model}
+\title{Bayesian time-varying occupancy model}
 \usage{
 btvoccu(
   niter,
@@ -16,14 +16,14 @@ btvoccu(
   speffs = NULL,
   A = NULL,
   logit = TRUE,
-  nchains = 2,
+  nchains = 1,
   print.interval = 1000
 )
 }
 \arguments{
 \item{niter}{integer: # of iterations}
 
-\item{x}{numeric array: predictors array}
+\item{x}{numeric array: covariate array}
 
 \item{y}{binary array: response array}
 
@@ -33,17 +33,17 @@ btvoccu(
 
 \item{periods}{vector}
 
-\item{occueffs}{vector: occupancy effects}
+\item{occueffs}{character vector: occupancy effects}
 
-\item{deteffs}{vector: detection effects}
+\item{deteffs}{character vector: detection effects}
 
-\item{speffs}{vector: spatial random effects}
+\item{speffs}{character vector: spatial random effects}
 
 \item{A}{adjacency matrix}
 
 \item{logit}{logical: default \code{TRUE} for logistic regression and \code{FALSE} for probit regression}
 
-\item{nchains}{integer: # of chains (default \code{2})}
+\item{nchains}{number of chains (default \code{1})}
 
 \item{print.interval}{integer: period to print iteration to console (default \code{1000})}
 }
