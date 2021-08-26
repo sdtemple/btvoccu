@@ -15,18 +15,18 @@
 #' @return numeric array
 #' 
 #' @examples 
-#' x <- append_transform(x, "precipitation", sqrt, "sqrt.")
-#' x <- append_transform(x, "popdensity", log10, "log10.")
+#' x <- append_transformed_term(x, "precipitation", sqrt, "sqrt.")
+#' x <- append_transformed_term(x, "popdensity", log10, "log10.")
 #'
 #' @export
-append_transform <- function(x, covariate, fn, prefix){
+append_transformed_term <- function(x, covariate, fn, prefix){
   covind <- which(dimnames(x)[[4]] == covariate, arr.ind = T)
   x <- abind::abind(x, fn(x[,,,covind]))
   dimnames(x)[[4]][dim(x)[4]] <- paste(prefix, covariate, sep = '')
   return(x)
 }
 
-#' Append interaction
+#' Append interaction term
 #'
 #' Append an interaction variable to a 4D array.
 #'
@@ -37,10 +37,10 @@ append_transform <- function(x, covariate, fn, prefix){
 #' @return numeric array
 #' 
 #' @examples 
-#' x <- append_interaction(x, "temperature", "precipitation")
+#' x <- append_interaction_term(x, "temperature", "precipitation")
 #'
 #' @export
-append_interaction <- function(x, covariate, predictor){
+append_interaction_term <- function(x, covariate, predictor){
   covind <- which(dimnames(x)[[4]] == covariate, arr.ind = T)
   predind <- which(dimnames(x)[[4]] == predictor, arr.ind = T)
   x <- abind::abind(x, x[,,,covind] * x[,,,predind])
@@ -59,11 +59,11 @@ append_interaction <- function(x, covariate, predictor){
 #' @return numeric array
 #' 
 #' @examples
-#' x <- append_lags(x, "precipitation", 2)
-#' x <- append_lags(x, "precipitation", c(2, 4, 6))
+#' x <- append_lagged_terms(x, "precipitation", 2)
+#' x <- append_lagged_terms(x, "precipitation", c(2, 4, 6))
 #'
 #' @export
-append_lags <- function(x, covariate, lags){
+append_lagged_terms <- function(x, covariate, lags){
   
   covind <- which(dimnames(x)[[4]] == covariate, arr.ind = T)
   for(lag in lags){
@@ -93,7 +93,7 @@ append_lags <- function(x, covariate, lags){
 #' @return numeric array
 #'
 #' @export
-append_leads <- function(x, covariate, leads){
+append_leading_terms <- function(x, covariate, leads){
   
   covind <- which(dimnames(x)[[4]] == covariate, arr.ind = T)
   for(lead in leads){
@@ -125,10 +125,10 @@ append_leads <- function(x, covariate, leads){
 #' @return numeric array
 #' 
 #' @examples 
-#' x <- append_pcs(x, dimnames(x)[[4]][12:23], 2, "climate")
+#' x <- append_principal_components(x, dimnames(x)[[4]][12:23], 2, "climate")
 #'
 #' @export
-append_pcs <- function(x, covariates, npc, prefix){
+append_principal_components <- function(x, covariates, npc, prefix){
   
   z <- apply(x, 4, as.numeric)
   indices <- which(dimnames(z)[[2]] %in% covariates, arr.ind = T)
@@ -137,11 +137,8 @@ append_pcs <- function(x, covariates, npc, prefix){
   print(factoextra::fviz_pca_var(components, repel = T))
   z.pca <- factoextra::get_pca_ind(components)
   x.pca <- array(dim = c(dim(x)[1:3], npc),
-                 dimnames = list(dimnames(x)[[1]],
-                                 dimnames(x)[[2]],
-                                 dimnames(x)[[3]],
-                                 paste(prefix, '.pc', 1:npc, sep = ''))
-  )
+                 dimnames = list(dimnames(x)[[1]], dimnames(x)[[2]], dimnames(x)[[3]],
+                                 paste(prefix, '.pc', 1:npc, sep = '')))
   
   for(l in 1:npc){
     n <- 1
@@ -170,10 +167,10 @@ append_pcs <- function(x, covariates, npc, prefix){
 #' @return numeric array
 #' 
 #' @examples 
-#' x <- append_sp(x, c("urban", "agri", "forest"), adjacency_matrix)
+#' x <- append_spatial_effects(x, c("urban", "agri", "forest"), adjacency_matrix)
 #'
 #' @export
-append_sp <- function(x, arealeffs, A){
+append_spatial_effects <- function(x, arealeffs, A){
   
   # local function
   spmatrix <- function(X, A){

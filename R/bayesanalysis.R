@@ -89,7 +89,7 @@ posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .
 #' @return matrix
 #'
 #' @export
-posterior_corrs <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
+posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
   
   mjridx <- which(names(model) == Sigmas, arr.ind = T)
   out <- model[[mjridx]]
@@ -141,7 +141,7 @@ posterior_corrs <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.
 #' @return matrix
 #'
 #' @export
-posterior_vars <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
+posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
   
   mjridx <- which(names(model) == Sigmas, arr.ind = T)
   out <- model[[mjridx]]
