@@ -1,7 +1,12 @@
 # btvoccu
 bayesian time-varying occupancy modeling
 
-Covariate Descriptions (WNV in Ontario)
+### Package Summary
+This package facilitates Bayesian analysis for the time-varying occupancy with occupancy and detection components modeled as GLMs with logit or probit links. The main function is `btvoccu`. It outputs a list of length 15 which includes model details and posterior samples. All other functions fall into three categories: (1) manipulating a 4-dimensional array, (2) summarizing a Bayesian model, or (3) plotting results. Analysis is meant for 4-dimensional arrays, in which the (ordered) major dimensions are sites, seasons, periods, and covariates/response.  
+
+### WNV in Ontario
+
+#### Covariate Descriptions
 * intercept : all 1s
 * popdensity : population / area from 2016 Census of Canada
 * mean.max.temp.warmest.m :
