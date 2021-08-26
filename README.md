@@ -29,6 +29,9 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * wks.meantemp.below.freezing :
 * maxtemp.winter.avg :
 * mintemp.winter.avg :
+* level.avg.avg :
+* level.avg.max :
+* level.range.max :
 * flow.max.avg :
 * daylight :
 * X.surveys :
