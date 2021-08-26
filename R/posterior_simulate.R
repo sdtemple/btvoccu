@@ -1,11 +1,11 @@
-#' Posterior Simulation
+#' Posterior simulation
 #'
 #' Simulate presence-absences based on a \code{btvoccu} model.
 #' Output some predictive checks and statistics,
 #' including a histogram.
 #'
-#' @param model \code{btvoccu} output
-#' @param x numeric array: predictors array
+#' @param model \code{btvoccu} model object
+#' @param x numeric array: covariate array
 #' @param y binary array: response array (default \code{NULL} does not provide posterior predictive checks)
 #' @param sites vector (default \code{NULL} uses training sites)
 #' @param seasons vector (default \code{NULL} uses training seasons)

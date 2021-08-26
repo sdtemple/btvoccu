@@ -5,7 +5,7 @@
 #' @param model \code{btvoccu} output
 #' @param burnin percent of posterior samples to burn
 #' @param thin integer: default \code{1} implies no thinning, \code{2} means keep every other draw, etc.
-#' @param credible vector of quantiles
+#' @param credible quantiles
 #'
 #' @return matrix
 #'
