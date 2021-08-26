@@ -57,6 +57,7 @@ btvoccu <- function(niter,
 
   # models
   if(is.null(M)){ # without spatial random effect
+    
     # samplers
     gibbs_logit_btvoccu <- function(niter,
                                     y,
