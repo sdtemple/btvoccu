@@ -41,18 +41,19 @@ combine_chains <- function(model, effect, mnridx, burnin = .5, thin = 1){
 posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .50, .975)){
   
   if(is.null(model$speffs)){
-    effects <- c('betas','alphas')
+    effects <- c("betas","alphas")
   } else{
-    effects <- c('betas','alphas','thetas')
+    effects <- c("betas","alphas","thetas")
   }
   
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
   nchains <- model$nchains
   
   n <- 0
-  table <- matrix(nrow = 0, ncol = (length(credible) + 2))
+  table <- matrix(nrow = 0, ncol = (length(credible) + 3))
   indices <- which(names(model) %in% effects, arr.ind = T)
   for(i in indices){
+    nameidx <- names(model)[i+6]
     for(j in 1:dim(model[[i]])[3]){
       
       # combine chains
@@ -63,15 +64,16 @@ posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .
       for(k in 1:nchains){mcmc[[k]] <- coda::as.mcmc(model[[i]][k, keep, j])}
       
       # store in table
-      table <- rbind(table, c(quantile(combined, credible),mean(combined),
+      table <- rbind(table, c(getElement(model, nameidx)[j],
+                              quantile(combined, credible),mean(combined),
                               coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]))
       n <- n + 1
       rownames(table)[n] <- paste(substr(names(model)[i],
                                          1, (nchar(names(model)[i])-1)),
-                                  j, sep = '')
+                                  j, sep = "")
     }
   }
-  colnames(table) <- c(credible, 'mean', 'rhat')
+  colnames(table) <- c("covariate", credible, "mean", "rhat")
   
   return(table)
 }
@@ -92,13 +94,16 @@ posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .
 posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
   
   mjridx <- which(names(model) == Sigmas, arr.ind = T)
+  nameidx <- names(model)[mjridx+3]
   out <- model[[mjridx]]
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
   
   n <- 0
-  table <- matrix(nrow = 0, ncol = (length(credible) + 2))
+  table <- matrix(nrow = 0, ncol = (length(credible) + 4))
   for(i in 1:(dim(out)[3] - 1)){
+    namei <- getElement(model, nameidx)[i]
     for(j in (i+1):dim(out)[3]){
+      namej <- getElement(model, nameidx)[j]
       
       # format as coda mcmc object
       mcmc <- coda::mcmc.list()
@@ -116,13 +121,13 @@ posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credibl
       
       # store in table
       n <- n + 1
-      table <- rbind(table, c(quantile(vec, credible), mean(vec), rhat))
+      table <- rbind(table, c(namei, namej, quantile(vec, credible), mean(vec), rhat))
       rownames(table)[n] <- paste(substr(names(model)[mjridx],
                                          1, (nchar(names(model)[mjridx])-1)),
-                                  i, j, sep = '')
+                                  i, j, sep = "")
     }
   }
-  colnames(table) <- c(credible, 'mean', 'rhat')
+  colnames(table) <- c("covariate1", "covariate2", credible, "mean", "rhat")
   
   return(table)
 }
@@ -144,13 +149,14 @@ posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credibl
 posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
   
   mjridx <- which(names(model) == Sigmas, arr.ind = T)
+  nameidx <- names(model)[mjridx+3]
   out <- model[[mjridx]]
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
   nchains <- model$nchains
   
-  if(Sigmas == 'sigmathetas'){
+  if(Sigmas == "sigmathetas"){
     if(is.null(model$sigmathetas)){
-      stop('This model is not a spatial model.')
+      stop("This model is not a spatial model.")
     }
     
     # format as coda mcmc object
@@ -169,15 +175,16 @@ posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible =
     # store in table
     table <- matrix(nrow = 0, ncol = (length(credible) + 2))
     table <- rbind(table, c(quantile(vec, credible), mean(vec), rhat))
-    rownames(table)[1] <- 'sigmathetasq'
-    colnames(table) <- c(credible, 'mean', 'rhat')
+    rownames(table)[1] <- "sigmathetasq"
+    colnames(table) <- c(credible, "mean", "rhat")
     
     return(table)
   }
   
   n <- 0
-  table <- matrix(nrow = 0, ncol = (length(credible) + 2))
+  table <- matrix(nrow = 0, ncol = (length(credible) + 3))
   for(i in 1:(dim(out)[3])){
+    name <- getElement(model, nameidx)[i]
     
     # format as coda mcmc object
     mcmc <- coda::mcmc.list()
@@ -193,12 +200,12 @@ posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible =
     
     # store in table
     n <- n + 1
-    table <- rbind(table, c(quantile(vec, credible), mean(vec), rhat))
+    table <- rbind(table, c(name, quantile(vec, credible), mean(vec), rhat))
     rownames(table)[n] <- paste(substr(names(model)[mjridx],
                                        1, (nchar(names(model)[mjridx])-1)),
-                                i, i, sep = '')
+                                i, i, sep = "")
   }
-  colnames(table) <- c(credible, 'mean', 'rhat')
+  colnames(table) <- c("covariate", credible, "mean", "rhat")
   
   return(table)
 }
@@ -214,13 +221,13 @@ posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible =
 #' 
 #' @examples 
 #' trace_plot(mdl, "betas", 1)
-#' trace_plot(mdl, "alphas", 1, 0)
+#' trace_plot(mdl, "alphas", 1, 0.10)
 #'
 #' @export
-plot_trace <- function(model, effects, mnridx, burnin = .5){
+plot_trace <- function(model, effects, mnridx, burnin = 0){
   
   mjridx <- which(names(model) == effects, arr.ind = T)
-  colors <- rainbow(model$nchains)
+  colors <- grDevices::rainbow(model$nchains)
   burn <- -(1:(floor(burnin * model$niter)))
   
   # ylim
@@ -232,14 +239,22 @@ plot_trace <- function(model, effects, mnridx, burnin = .5){
   }
   
   # plot
+  if(effects == "betas"){
+    name <- "occueffs"
+  }
+  else if(effects == "alphas"){
+    name <- "deteffs"
+  }
+  else {
+    name <- "speffs"
+  }
   plot(model[[mjridx]][1, burn, mnridx],
-       ylab = paste(substr(effects, 1, (nchar(effects)-1)),
-                    mnridx,
-                    sep = ''),
-       xlab = 'index',
-       type = 'l',
+       ylab = getElement(model, name)[mnridx],
+       xlab = "index",
+       type = "l",
        col = colors[1],
-       ylim = c(mn, mx))
+       ylim = c(mn, mx),
+       main = effects)
   for(n in 2:model$nchains){lines(model[[mjridx]][n, burn, mnridx], col = colors[n])}
 }
 
@@ -309,7 +324,7 @@ waic_score <- function(model, x, y,
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
   nsample <- model$nchains * length(keep)
   if(is.null(speffs)){
-    effects <- c('betas','alphas') # no spatial effects
+    effects <- c("betas","alphas") # no spatial effects
     indices <- which(effects %in% names(model), arr.ind = T)
     samples <- list()
     for(m in 1:length(indices)){
@@ -319,10 +334,10 @@ waic_score <- function(model, x, y,
         combined[,n] <- combine_chains(model, effects[indices[m]], n, burnin, thin)
       }
       samples[[m]] <- combined
-      names(samples)[m] <- c('betas','alphas')[indices[m]]
+      names(samples)[m] <- c("betas","alphas")[indices[m]]
     }
   } else{
-    effects <- c('betas','alphas','thetas') # spatial effects included
+    effects <- c("betas","alphas","thetas") # spatial effects included
     indices <- which(effects %in% names(model), arr.ind = T)
     samples <- list()
     for(m in 1:length(indices)){
@@ -332,7 +347,7 @@ waic_score <- function(model, x, y,
         combined[,n] <- combine_chains(model, effects[indices[m]], n, burnin, thin)
       }
       samples[[m]] <- combined
-      names(samples)[m] <- c('betas','alphas','thetas')[indices[m]]
+      names(samples)[m] <- c("betas","alphas","thetas")[indices[m]]
     }
   }
   
@@ -412,7 +427,7 @@ waic_score <- function(model, x, y,
   output[[2]] <- ellpd
   output[[3]] <- llpd
   output[[4]] <- pwaic
-  names(output) <- c('waic','ellpd','llpd','pwaic')
+  names(output) <- c("waic","ellpd","llpd","pwaic")
   
   return(output)
 }
@@ -470,7 +485,7 @@ posterior_sigmoids <- function(model, x,
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
   nsample <- model$nchains * length(keep)
   if(is.null(speffs)){
-    effects <- c('betas','alphas') # no spatial effects
+    effects <- c("betas","alphas") # no spatial effects
     indices <- which(effects %in% names(model), arr.ind = T)
     samples <- list()
     for(m in 1:length(indices)){
@@ -480,10 +495,10 @@ posterior_sigmoids <- function(model, x,
         combined[,n] <- combine_chains(model, effects[indices[m]], n, burnin, thin)
       }
       samples[[m]] <- combined
-      names(samples)[m] <- c('betas','alphas')[indices[m]]
+      names(samples)[m] <- c("betas","alphas")[indices[m]]
     }
   } else{
-    effects <- c('betas','alphas','thetas') # spatial effects included
+    effects <- c("betas","alphas","thetas") # spatial effects included
     indices <- which(effects %in% names(model), arr.ind = T)
     samples <- list()
     for(m in 1:length(indices)){
@@ -493,7 +508,7 @@ posterior_sigmoids <- function(model, x,
         combined[,n] <- combine_chains(model, effects[indices[m]], n, burnin, thin)
       }
       samples[[m]] <- combined
-      names(samples)[m] <- c('betas','alphas','thetas')[indices[m]]
+      names(samples)[m] <- c("betas","alphas","thetas")[indices[m]]
     }
   }
   
@@ -558,7 +573,7 @@ posterior_sigmoids <- function(model, x,
   sigmoids[[1]] <- occu
   sigmoids[[2]] <- det
   sigmoids[[3]] <- pre
-  names(sigmoids) <- c('Occupancy','Detection','Presence')
+  names(sigmoids) <- c("Occupancy","Detection","Presence")
   
   return(sigmoids)
 }
@@ -576,7 +591,7 @@ rpresence <- function(pre){
                 dimnames = list(dimnames(pre)[[1]],
                                 dimnames(pre)[[2]],
                                 dimnames(pre)[[3]],
-                                'Response')
+                                "Response")
   )
   d <- sample(dim(pre)[4], 1)
   for(i in 1:dim(pre)[1]){
@@ -694,15 +709,15 @@ posterior_check <- function(model,
     # plotting
     output[[1]] <- hist(yreppre,
                         main = NULL,
-                        ylab = 'Density',
-                        xlab = 'Presences',
+                        ylab = "Density",
+                        xlab = "Presences",
                         probability = T,
                         xlim = c(min(ypre, min(yreppre)),
                                  max(ypre, max(yreppre))),
                         breaks <- seq(min(ypre, min(yreppre)) - .5,
                                       max(ypre, max(yreppre)) + .5),
-                        col = 'gray')
-    abline(v = ypre, col = 'red')
+                        col = "gray")
+    abline(v = ypre, col = "red")
     
     # checks
     prepval <- sum(yreppre <  (ypre + 0.5)) / nrep
@@ -715,18 +730,18 @@ posterior_check <- function(model,
     output[[5]] <- mean(yreppre)
     output[[6]] <- sd(yreppre)
     output[[7]] <- ypre
-    names(output) <- c('histogram','pval','relativepresence','mse','avgpresences', 'sdpresences','actualpresences')
+    names(output) <- c("histogram","pval","relativepresence","mse","avgpresences", "sdpresences","actualpresences")
   } else{
     output[[1]] <- hist(yreppre,
                         main = NULL,
-                        ylab = 'Density',
-                        xlab = 'Presences',
+                        ylab = "Density",
+                        xlab = "Presences",
                         probability = T,
                         xlim = c(min(yreppre),
                                  max(yreppre)),
                         breaks <- seq(min(yreppre) - .5,
                                       max(yreppre) + .5),
-                        col = 'gray'
+                        col = "gray"
     )
     output[[2]] <- NULL
     output[[3]] <- NULL
@@ -734,13 +749,13 @@ posterior_check <- function(model,
     output[[5]] <- mean(yreppre)
     output[[6]] <- sd(yreppre)
     output[[7]] <- NULL
-    names(output) <- c('histogram',
-                       'pval',
-                       'relativepresences',
-                       'mse',
-                       'avgpresences',
-                       'sdpresences',
-                       'actualpresences')
+    names(output) <- c("histogram",
+                       "pval",
+                       "relativepresences",
+                       "mse",
+                       "avgpresences",
+                       "sdpresences",
+                       "actualpresences")
   }
   
   return(output)
@@ -758,7 +773,7 @@ posterior_check <- function(model,
 #' @param sites character vector
 #' @param season integer
 #' @param periods integer vector
-#' @param value 'Occupancy', 'Detection', or 'Presence'
+#' @param value "Occupancy", "Detection", or "Presence"
 #' @param burnin percent of posterior samples to burn
 #' @param thin keep every nth posterior draw
 #' @param credible quantiles (length \code{3})
@@ -774,7 +789,7 @@ btvoccu_predict <- function(model, x,
                             sites,
                             season,
                             periods,
-                            value = 'Occupancy',
+                            value = "Occupancy",
                             burnin = .5,
                             thin = 1,
                             credible = c(.025,.5,.975),
@@ -794,7 +809,7 @@ btvoccu_predict <- function(model, x,
   # set up data frame
   n <- 0
   df <- data.frame(matrix(NA, ncol = 6, nrow = 0))
-  colnames(df) <- c('Site','Season','Period','Lower','Middle','Upper')
+  colnames(df) <- c("Site","Season","Period","Lower","Middle","Upper")
   for(i in 1:length(sites)){
     for(k in length(periods):1){ # iterate in reverse for weeks
       n <- n + 1
@@ -871,7 +886,7 @@ btvoccu_predict <- function(model, x,
 #' @param sites vector
 #' @param season length \code{1} vector
 #' @param periods vector
-#' @param value 'Occupancy', 'Detection', or 'Presence'
+#' @param value "Occupancy", "Detection", or "Presence"
 #' @param burnin percent of posterior samples to burn
 #' @param thin keep every nth posterior draw
 #' @param credible quantiles (length \code{3})
@@ -892,7 +907,7 @@ plot_btvoccu <- function(model,
                          sites,
                          season,
                          periods,
-                         value = 'Occupancy',
+                         value = "Occupancy",
                          burnin = .5,
                          thin = 1,
                          credible = c(.025,.5,.975),
@@ -902,8 +917,8 @@ plot_btvoccu <- function(model,
                          spline = FALSE,
                          spline.predict = FALSE,
                          nknots = 5,
-                         xaxis = 'Period',
-                         legendtitle = 'Site'){
+                         xaxis = "Period",
+                         legendtitle = "Site"){
   
   df <- btvoccu_predict(model,
                         x,
@@ -985,8 +1000,8 @@ plot_covariate <- function(x,
                            periods,
                            covariate,
                            yaxis,
-                           xaxis = 'Period',
-                           legendtitle = 'Site'){
+                           xaxis = "Period",
+                           legendtitle = "Site"){
                               
   sites <- sort(sites)
   periods <- sort(periods)
@@ -1001,7 +1016,7 @@ plot_covariate <- function(x,
   
   n <- 0
   df <- data.frame(matrix(NA, ncol = 4, nrow = 0))
-  colnames(df) <- c('Site','Season','Period','Covariate')
+  colnames(df) <- c("Site","Season","Period","Covariate")
   for(i in 1:length(sites)){
     for(k in length(periods):1){ # iterate in reverse for weeks
       n <- n + 1
