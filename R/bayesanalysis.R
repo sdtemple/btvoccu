@@ -15,6 +15,11 @@
 #' @param thin keep every nth posterior draw
 #'
 #' @return vector of posterior samples
+#' 
+#' @examples 
+#' vec <- combine_chains(mdl, "betas", 1, burnin = 0.10)
+#' 
+#' @export
 combine_chains <- function(model, effect, mnridx, burnin = .5, thin = 1){
   mjridx <- which(names(model) == effect, arr.ind = T)
   keep <- seq(ceiling(burnin * model$niter), model$niter, by = thin)
@@ -35,7 +40,8 @@ combine_chains <- function(model, effect, mnridx, burnin = .5, thin = 1){
 #' @return matrix
 #' 
 #' @examples
-#' posterior_effects(mdl, 0.10, 2, c(0.25, 0.5, 0.75))
+#' View(posterior_effects(mdl, 0.10, 2, c(0.25, 0.5, 0.75)))
+#' xtable(posterior_effects(mdl))
 #'
 #' @export
 posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .50, .975)){
@@ -89,6 +95,10 @@ posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .
 #' @param credible quantiles
 #'
 #' @return matrix
+#' 
+#' @examples 
+#' View(posterior_correlations(mdl, "Sigmabetas"))
+#' xtable(posterior_correlations(mdl, "Sigmaalphas", burnin = 0.10))
 #'
 #' @export
 posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
@@ -144,6 +154,11 @@ posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credibl
 #' @param credible quantiles
 #'
 #' @return matrix
+#' 
+#' @examples 
+#' posterior_variances(mdl, "sigmathetas")
+#' View(posterior_variances(mdl, "Sigmabetas"))
+#' xtable(posterior_variances(mdl, "Sigmaalphas", burnin = 0.10))
 #'
 #' @export
 posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible = c(.025,.5,.975)){
@@ -222,6 +237,7 @@ posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible =
 #' @examples 
 #' trace_plot(mdl, "betas", 1)
 #' trace_plot(mdl, "alphas", 1, 0.10)
+#' for(i in 1:length(mdl$occueffs)){plot_trace(mdl, "betaS", i, burnin = 0)}
 #'
 #' @export
 plot_trace <- function(model, effects, mnridx, burnin = 0){
@@ -263,19 +279,21 @@ plot_trace <- function(model, effects, mnridx, burnin = 0){
 #' Watanabe Akaike information criterion
 #'
 #' Compute Watanabe-Akaike information criterion.
-#' When indices are set to \code{NULL},
-#' WAIC is calculated using the training data.
 #'
 #' @param model \code{btvoccu} model object
 #' @param x numeric array: covariate array
 #' @param y binary array: response array
-#' @param sites vector
-#' @param seasons vector
-#' @param periods vector
+#' @param sites vector (default \code{NULL} uses training sites)
+#' @param seasons vector (default \code{NULL} uses training seasons)
+#' @param periods vector (default \code{NULL} uses training periods)
 #' @param burnin percent of posterior samples to burn
 #' @param thin keep every nth posterior draw
 #'
 #' @return list
+#' 
+#' @examples
+#' waic_score(mdl, x, y, burnin = 0.10)
+#' waic_score(mdl, x, y, c("TOR", "YRK", "PEE"), 2002:2005, 20:40)
 #'
 #' @export
 waic_score <- function(model, x, y,
@@ -447,6 +465,9 @@ waic_score <- function(model, x, y,
 #' @param thin keep every nth draw
 #'
 #' @return numeric array
+#' 
+#' @examples 
+#' arry <- posterior_simulate(mdl, x, c("TOR", "YRK", "PEE"), 2004:2005, 20:40)
 #'
 #' @export
 posterior_sigmoids <- function(model, x,
@@ -586,6 +607,11 @@ posterior_sigmoids <- function(model, x,
 #' @param pre numeric array: presence probabilities
 #'
 #' @return binary array
+#' 
+#' @examples 
+#' sim <- rpresence(posterior_simulate(mdl, x, c("TOR", "YRK", "PEE"), 2004:2005, 20:40))
+#' 
+#' @export
 rpresence <- function(pre){
   yrep <- array(NA, dim = c(dim(pre)[1:3], 1),
                 dimnames = list(dimnames(pre)[[1]],
@@ -623,6 +649,11 @@ rpresence <- function(pre){
 #' @param thin keep every nth draw
 #' 
 #' @return list
+#' 
+#' @examples 
+#' output <- posterior_check(mdl, x)
+#' output <- posterior_check(mdl, x, NULL, c("TOR", "YRK", "PEE"), 2004:2005, 20:40)
+#' output <- posterior_check(mdl, x, y, c("TOR", "YRK", "PEE"), 2004:2005, 20:40)
 #'
 #' @export
 posterior_check <- function(model, 
@@ -778,11 +809,16 @@ posterior_check <- function(model,
 #' @param thin keep every nth posterior draw
 #' @param credible quantiles (length \code{3})
 #' @param ndraws number of posterior draws
-#' @param spline logical: default \code{TRUE} to fit smoothing splines
+#' @param spline logical: default \code{FALSE} to not fit smoothing splines
 #' @param spline.predict logical: default \code{FALSE} to not predict missing values using splines
 #' @param nknots see \code{smooth.spline()}
 #' 
 #' @return data frame
+#' 
+#' @examples 
+#' output <- btvoccu_predict(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40)
+#' output <- btvoccu_predict(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40, "Detection")
+#' output <- btvoccu_predict(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40, "Presence")
 #'
 #' @export
 btvoccu_predict <- function(model, x,
@@ -794,7 +830,7 @@ btvoccu_predict <- function(model, x,
                             thin = 1,
                             credible = c(.025,.5,.975),
                             ndraws = 1000,
-                            spline = TRUE,
+                            spline = FALSE,
                             spline.predict = FALSE,
                             nknots = 5){
   
@@ -900,6 +936,13 @@ btvoccu_predict <- function(model, x,
 #' @param legendtile character: legend label
 #'
 #' @return \code{ggplot} object
+#' 
+#' @examples 
+#' plot_btvoccu(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40)
+#' plot_btvoccu(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40, spline = T)
+#' plot_btvoccu(mdl, x, c("TOR", "YRK", "PEE", "THB", "ALG", "OTT"), 2005, 20:40, spline = T)
+#' plot_btvoccu(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40, "Detection")
+#' plot_btvoccu(mdl, x, c("TOR", "YRK", "PEE"), 2005, 20:40, "Presence")
 #'
 #' @export
 plot_btvoccu <- function(model,
@@ -992,6 +1035,10 @@ plot_btvoccu <- function(model,
 #' @param legendtile character: legend label
 #'
 #' @return \code{ggplot} object
+#' 
+#' @examples 
+#' plot_covariate(x, c("TOR", "YRK", "PEE"), 2005, 20:40, "popdensity", "Population Density")
+#' plot_covariate(x, c("TOR", "YRK", "PEE"), 2005, 20:40, "temperature", "Temperature (Celsius)")
 #'
 #' @export
 plot_covariate <- function(x,
@@ -1038,12 +1085,3 @@ plot_covariate <- function(x,
       ggplot2::scale_y_continuous(limits = c(mn - .001, mx + .001))
   )
 }
-
-
-
-
-
-
-
-
-
