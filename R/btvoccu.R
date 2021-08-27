@@ -18,6 +18,9 @@
 #' @param print.interval integer: period to print iteration to console (default \code{1000})
 #'
 #' @return length \code{15} list of posterior samples and more
+#' 
+#' @examples 
+#' btvoccu(5000, c("A","B","C","D"), 2002:2005, 20:40, c("intercept", "temperature", "precipitation"), c("intercept", "visits"))
 #'
 #' @export
 btvoccu <- function(niter, 

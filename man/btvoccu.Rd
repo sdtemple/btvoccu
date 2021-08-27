@@ -54,3 +54,7 @@ length \code{15} list of posterior samples and more
 Train a time-varying occupancy model
 using Bayesian generalized linear regression.
 }
+\examples{
+btvoccu(5000, c("A","B","C","D"), 2002:2005, 20:40, c("intercept", "temperature", "precipitation"), c("intercept", "visits"))
+
+}
