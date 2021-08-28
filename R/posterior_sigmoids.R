@@ -31,9 +31,6 @@ posterior_sigmoids <- function(model, x,
   seasons <- sort(seasons)
   periods <- sort(periods)
   
-  y <- subset_4darray(y, 2, seasons)
-  y <- subset_4darray(y, 3, periods)
-  
   x <- subset_4darray(x, 1, sites)
   x <- subset_4darray(x, 2, seasons)
   x <- subset_4darray(x, 3, periods)
