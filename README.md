@@ -13,6 +13,8 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * Land: http://www.earthenv.org/landcover (EarthEnv)
 * Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim)
 * Birds: https://ebird.org/science/use-ebird-data/download-ebird-data-products (eBird)
+* Population: https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/details/download-telecharger/comp/GetFile.cfm?Lang=E&FILETYPE=CSV&GEONO=058 (2016 Census)
+* Daylight: https://www.timeanddate.com/sun/
 
 #### Covariate Descriptions
 * intercept : all 1s
