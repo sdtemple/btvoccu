@@ -8,7 +8,7 @@ Authors@R:
            email = "sdtemple@uw.edu",
            comment = c(ORCID = "0000-0002-7651-6527"))
 Description: This package implements Gibbs sampling for Bayesian logistic and probit regressions in the context of time-varying occupancy models.
-Imports: mvtnorm, truncnorm, BayesLogit, faraway, MCMCpack, abind, factoextra, coda, ggplot2
+Imports: mvtnorm, truncnorm, BayesLogit, faraway, abind, MCMCpack, coda, ggplot2, grDevices, rcartocolor, factoextra
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
