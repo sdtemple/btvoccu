@@ -16,7 +16,8 @@
 plot_trace <- function(model, effects, mnridx, burnin = 0){
   
   mjridx <- which(names(model) == effects, arr.ind = T)
-  colors <- rcartocolor::carto_pal(model$nchains, "Safe")
+  colors <- rcartocolor::carto_pal(12, "Safe")
+  colors <- colors[1:model$nchains]
   #colors <- grDevices::rainbow(model$nchains)
   burn <- -(1:(floor(burnin * model$niter)))
   
