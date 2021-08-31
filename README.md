@@ -11,13 +11,13 @@ We provide a vignette as a practical tutorial with simulated data. In general, m
 3. Transform covariates (`append_*()` functions)
 4. Split data into training, validation, and testing datasets. (`subset_4darray()`, `split_4darray()`)
 5. Fit models with training data (`btvoccu()`)
-6. Check MCMC diagnostics (`plot_trace(), posterior_effects(), posterior_correlations(), posterior_variances()`)
-7. Evaluate models on validation dataset (`waic_score(), posterior_check()`)
+6. Check MCMC diagnostics (`plot_trace()`, `posterior_effects()`, `posterior_correlations()`, `posterior_variances()`)
+7. Evaluate models on validation dataset (`waic_score()`, `posterior_check()`)
 8. Select final model(s)
 9. Fit final model(s) with training and validation data (`btvoccu()`)
-10. Check MCMC diagnostics (`plot_trace(), posterior_effects(), posterior_correlations(), posterior_variances()`)
-11. Evaluate models on testing dataset (`waic_score(), posterior_check()`)
-12. Plot (`plot_btvoccu()`, `plot_covariate()`)
+10. Check MCMC diagnostics (`plot_trace()`, `posterior_effects()`, `posterior_correlations()`, `posterior_variances()`)
+11. Evaluate models on testing dataset (`waic_score()`, `posterior_check()`)
+12. Plot (`plot_btvoccu()`, `plot_covariate()`, your own mapping code)
 
 ### WNV in Ontario
 
