@@ -20,7 +20,7 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 All covariates are aggregated to be weekly statistics for the public health units of Ontario.
 * intercept : all 1s
 * popdensity : population / area from 2016 census
-* mean.max.temp.warmest.m :
+* mean.max.temp.warmest.m : 
 * mean.min.temp.coldest.m :
 * mean.temp.range.a :
 * mean.mean.temp.wettest.q :
@@ -36,16 +36,16 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * mintemp.wk : minimum temperature (w/ imputed distance-weighted average when missing)
 * meantemp.wk : mean temperature (w/ imputed distance-weighted average when missing)
 * precip.wk : precipitation (w/ imputed distance-weighted average when missing)
-* wks.mintemp.below.freezing :
-* wks.meantemp.below.freezing :
-* maxtemp.winter.avg :
-* mintemp.winter.avg :
+* wks.mintemp.below.freezing : # of weeks in which min temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
+* wks.meantemp.below.freezing : # of weeks 1 to 17 in which mean temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
+* maxtemp.winter.avg : average max temperature over numbered weeks 1 to 16
+* mintemp.winter.avg : average min temperature over numbered weeks 1 to 16
 * level.avg.avg :
 * level.avg.max :
 * level.range.max :
 * flow.max.avg :
 * daylight : daylight time with linear interpolation based on 7 locations spread ~ 1.5 latitude degrees apart 
-* X.surveys :
+* X.surveys : 
 * Ae.prop :
 * Cx.prop :
 * Cq.prop :
@@ -55,9 +55,9 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * agri : percent of land cover inferred to be cultivated and managed vegetation (7)
 * urban : percent of land cover inferred to be urban/built-up (9)
 * water : percent of land cover inferred to be open water (12)
-* bird.effort :
-* bird.abundance :
-* bird.richness :
-* bird.shannon :
-* bird.simpson :
+* bird.effort : count of checklists (download eBird mobile app to better understand, and to have fun!)
+* bird.abundance : count of birds observed
+* bird.richness : count of bird species observed
+* bird.shannon : https://en.wikipedia.org/wiki/Diversity_index#Shannon_index
+* bird.simpson : https://en.wikipedia.org/wiki/Diversity_index#Simpson_index
 
