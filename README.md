@@ -13,13 +13,13 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * Land: http://www.earthenv.org/landcover (EarthEnv)
 * Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim)
 * Birds: https://ebird.org/science/use-ebird-data/download-ebird-data-products (eBird)
-* Population: https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/details/download-telecharger/comp/GetFile.cfm?Lang=E&FILETYPE=CSV&GEONO=058 (2016 Census)
+* Population: https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/details/download-telecharger/comp/GetFile.cfm?Lang=E&FILETYPE=CSV&GEONO=058 (2016 census)
 * Daylight: https://www.timeanddate.com/sun/
 
 #### Covariate Descriptions
-All covariates are aggregated to be weekly statistics.
+All covariates are aggregated to be weekly statistics for the public health units of Ontario.
 * intercept : all 1s
-* popdensity : population / area from 2016 Census of Canada
+* popdensity : population / area from 2016 census
 * mean.max.temp.warmest.m :
 * mean.min.temp.coldest.m :
 * mean.temp.range.a :
@@ -32,10 +32,10 @@ All covariates are aggregated to be weekly statistics.
 * max.precip.wettest.q :
 * min.max.temp.warmest.m :
 * min.precip.wettest.m :
-* maxtemp.wk : weekly maximum temperature
-* mintemp.wk : weekly minimum temperature
-* meantemp.wk : weekly mean temperature
-* precip.wk : weekly precipitation
+* maxtemp.wk : maximum temperature (w/ imputed distance-weighted average when missing)
+* mintemp.wk : minimum temperature (w/ imputed distance-weighted average when missing)
+* meantemp.wk : mean temperature (w/ imputed distance-weighted average when missing)
+* precip.wk : precipitation (w/ imputed distance-weighted average when missing)
 * wks.mintemp.below.freezing :
 * wks.meantemp.below.freezing :
 * maxtemp.winter.avg :
