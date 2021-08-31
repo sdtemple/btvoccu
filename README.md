@@ -17,6 +17,7 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * Daylight: https://www.timeanddate.com/sun/
 
 #### Covariate Descriptions
+All covariates are aggregated to be weekly statistics.
 * intercept : all 1s
 * popdensity : population / area from 2016 Census of Canada
 * mean.max.temp.warmest.m :
@@ -43,17 +44,17 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * level.avg.max :
 * level.range.max :
 * flow.max.avg :
-* daylight :
+* daylight : daylight time with linear interpolation based on 7 locations spread ~ 1.5 latitude degrees apart 
 * X.surveys :
 * Ae.prop :
 * Cx.prop :
 * Cq.prop :
 * catch.rate :
-* trees :
-* veg :
-* agri :
-* urban :
-* water :
+* trees : percenof land cover inferred to be needleleaf, evergreen, deciduous, or mixed trees (1-4)
+* veg : percent of land cover inferred to be herbacious or regularly flooded vegetation (6,8)
+* agri : percent of land cover inferred to be cultivated and managed vegetation (7)
+* urban : percent of land cover inferred to be urban/built-up (9)
+* water : percent of land cover inferred to be open water (12)
 * bird.effort :
 * bird.abundance :
 * bird.richness :
