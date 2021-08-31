@@ -1,5 +1,5 @@
 # btvoccu
-bayesian time-varying occupancy modeling
+Bayesian Time-Varying Occupancy Modeling
 
 ### Package Summary
 This package facilitates Bayesian analysis for the time-varying occupancy with occupancy and detection components modeled as GLMs with logit or probit links. The main function is `btvoccu`. It outputs a list of length 15 which includes model details and posterior samples. All other functions fall into three categories: (1) manipulating a 4-dimensional array, (2) summarizing a Bayesian model, or (3) plotting results. Analysis is meant for 4-dimensional arrays, in which the (ordered) major dimensions are sites, seasons, periods, and covariates/response.
@@ -60,11 +60,11 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * level.range.max : range of water level values, max over the stations
 * flow.max.avg : flow, max over the week, average over the stations
 * daylight : daylight time with linear interpolation based on 7 locations spread ~ 1.5 latitude degrees apart 
-* X.surveys : 
-* Ae.prop :
-* Cx.prop :
-* Cq.prop :
-* catch.rate :
+* X.surveys : # of traps visited (some traps may be visited more than once in a given week)
+* Ae.prop : percent of trapped mosquitoes of the Aedes genus
+* Cx.prop : percent of trapped mosquitoes of the Culex genus
+* Cq.prop : percent of trapped mosquitoes of the Coquillettidia genus
+* catch.rate : count of trapped mosquitoes over # of traps visited
 * trees : percenof land cover inferred to be needleleaf, evergreen, deciduous, or mixed trees (1-4)
 * veg : percent of land cover inferred to be herbacious or regularly flooded vegetation (6,8)
 * agri : percent of land cover inferred to be cultivated and managed vegetation (7)
