@@ -5,17 +5,19 @@ bayesian time-varying occupancy modeling
 This package facilitates Bayesian analysis for the time-varying occupancy with occupancy and detection components modeled as GLMs with logit or probit links. The main function is `btvoccu`. It outputs a list of length 15 which includes model details and posterior samples. All other functions fall into three categories: (1) manipulating a 4-dimensional array, (2) summarizing a Bayesian model, or (3) plotting results. Analysis is meant for 4-dimensional arrays, in which the (ordered) major dimensions are sites, seasons, periods, and covariates/response.
 
 ### Modeling Pipeline
-We provide a vignette as a practical tutorial with simulated data. In general, modeling with the \code{btvoccu} package proceeds as follows:
+We provide a vignette as a practical tutorial with simulated data. In general, modeling with the `btvoccu` package proceeds as follows:
 1. Gather relevant covariates (your own code)
 2. Format covariates and the presence/absence response into 4-dimensional arrays
-3. Transform covariates (append functions)
-4. Split data into training, validation, and testing datasets. (subset_4darray, split_4darray)
-5. Fit models with training data (btvoccu)
-6. Evaluate models on validation dataset
-7. Select final model(s)
-8. Fit final model(s) with training and validation data (btvoccu)
-9. Evaluate models on testing dataset
-10. Plot (plot_btvoccu, plot_covariate)
+3. Transform covariates (`append_*()` functions)
+4. Split data into training, validation, and testing datasets. (`subset_4darray()`, `split_4darray()`)
+5. Fit models with training data (`btvoccu()`)
+6. Check MCMC diagnostics (`plot_trace(), posterior_effects(), posterior_correlations(), posterior_variances()`)
+7. Evaluate models on validation dataset (`waic_score(), posterior_check()`)
+8. Select final model(s)
+9. Fit final model(s) with training and validation data (`btvoccu()`)
+10. Check MCMC diagnostics (`plot_trace(), posterior_effects(), posterior_correlations(), posterior_variances()`)
+11. Evaluate models on testing dataset (`waic_score(), posterior_check()`)
+12. Plot (`plot_btvoccu()`, `plot_covariate()`)
 
 ### WNV in Ontario
 
