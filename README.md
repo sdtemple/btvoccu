@@ -8,7 +8,7 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 
 #### Data Sources
 * Mosquitoes: trap data from Public Health Ontario; provided by Deborah Shutt, PhD
-* Hydrology: https://github.com/paleolimbot/hydatr
+* Hydrometry: https://github.com/paleolimbot/hydatr
 * Weather: https://github.com/paleolimbot/rclimateca
 * Land: http://www.earthenv.org/landcover (EarthEnv)
 * Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim)
@@ -32,12 +32,12 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * max.precip.wettest.q :
 * min.max.temp.warmest.m :
 * min.precip.wettest.m :
-* maxtemp.wk : maximum temperature (w/ imputed distance-weighted average when missing)
-* mintemp.wk : minimum temperature (w/ imputed distance-weighted average when missing)
-* meantemp.wk : mean temperature (w/ imputed distance-weighted average when missing)
-* precip.wk : precipitation (w/ imputed distance-weighted average when missing)
+* maxtemp.wk : maximum temperature in Celsius (w/ imputed distance-weighted average when missing)
+* mintemp.wk : minimum temperature in Celsius (w/ imputed distance-weighted average when missing)
+* meantemp.wk : mean temperature in Celsius (w/ imputed distance-weighted average when missing)
+* precip.wk : precipitation in millimeters (w/ imputed distance-weighted average when missing)
 * wks.mintemp.below.freezing : # of weeks in which min temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
-* wks.meantemp.below.freezing : # of weeks 1 to 17 in which mean temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
+* wks.meantemp.below.freezing : # of weeks in which mean temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
 * maxtemp.winter.avg : average max temperature over numbered weeks 1 to 16
 * mintemp.winter.avg : average min temperature over numbered weeks 1 to 16
 * level.avg.avg :
@@ -61,3 +61,7 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * bird.shannon : https://en.wikipedia.org/wiki/Diversity_index#Shannon_index
 * bird.simpson : https://en.wikipedia.org/wiki/Diversity_index#Simpson_index
 
+#### Imputing and Average
+* Hydrometry: 
+* Weather: If a weather station is missing a covariate (temperature, precipitation), we find its 5 nearest neighbors and impute a distance-based weighted average. Some nearest neighbors may be missing as well, so this average may be over 1 or up to 5 values. In aggregating to the public health unit, we only use imputed covariates if these are the only ones available for the unit. For public health units without weather stations, we impute with a distance-based weighted average over 1 or up to 3 values. Units without weather stations are generally in dense urban areas (Greater Toronto), so we expect this spatial imputation is a reasonable approximation. 
+* Birds: Birding may fluctuate substantially on a weekly basis, so we average over the current and previous three weeks. This step imputes some missing values. For the remaining missing values, we impute using a median conditional on the public health unit and the epidemic week. For Shannon indices of 0 and Simpson indices of 1, we impute using the median conditional on the public health unit and the epidemic week. These values correspond to low birding effort (only one species observed). 
