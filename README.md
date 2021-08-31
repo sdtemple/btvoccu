@@ -11,7 +11,7 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 * Hydrometry: https://github.com/paleolimbot/hydatr
 * Weather: https://github.com/paleolimbot/rclimateca
 * Land: http://www.earthenv.org/landcover (EarthEnv)
-* Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim)
+* Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim 2000-2009)
 * Birds: https://ebird.org/science/use-ebird-data/download-ebird-data-products (eBird)
 * Population: https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/details/download-telecharger/comp/GetFile.cfm?Lang=E&FILETYPE=CSV&GEONO=058 (2016 census)
 * Daylight: https://www.timeanddate.com/sun/
@@ -20,18 +20,18 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 All covariates are aggregated to be weekly statistics for the public health units of Ontario.
 * intercept : all 1s
 * popdensity : population / area from 2016 census
-* mean.max.temp.warmest.m : 
-* mean.min.temp.coldest.m :
-* mean.temp.range.a :
-* mean.mean.temp.wettest.q :
-* mean.mean.temp.warmest.q :
-* max.max.temp.warmest.q :
-* max.min.temp.coldest.m :
-* max.temp.range.a :
-* max.mean.temp.warmest.q :
-* max.precip.wettest.q :
-* min.max.temp.warmest.m :
-* min.precip.wettest.m :
+* mean.max.temp.warmest.m : max temperature of the warmest month, mean over the decade
+* mean.min.temp.coldest.m : min temperature of the coldest month, mean over the decade
+* mean.temp.range.a : temperature annual range, mean over the decade
+* mean.mean.temp.wettest.q : mean temperature of the wettest quarter, mean over the decade
+* mean.mean.temp.warmest.q : mean temperature of the warmest quarter, mean over the decade
+* max.max.temp.warmest.q : max temperature of the warmest quarter, max over the decade
+* max.min.temp.coldest.m : min temperature of the coldest month, max over the decade
+* max.temp.range.a : temperature annual range, max over the decade
+* max.mean.temp.warmest.q : mean temperature of the warmest quarter, max over the decade
+* max.precip.wettest.q : precipitation of the wettest quarter, max over the decade
+* min.max.temp.warmest.m : max temperature of the warmest month, min over the decade
+* min.precip.wettest.m : precipitation of the wettest month, min of the decade
 * maxtemp.wk : maximum temperature in Celsius (w/ imputed distance-weighted average when missing)
 * mintemp.wk : minimum temperature in Celsius (w/ imputed distance-weighted average when missing)
 * meantemp.wk : mean temperature in Celsius (w/ imputed distance-weighted average when missing)
@@ -40,10 +40,10 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * wks.meantemp.below.freezing : # of weeks in which mean temperature is less than 0 degrees Celsius between numbered weeks 1 to 17
 * maxtemp.winter.avg : average max temperature over numbered weeks 1 to 16
 * mintemp.winter.avg : average min temperature over numbered weeks 1 to 16
-* level.avg.avg :
-* level.avg.max :
-* level.range.max :
-* flow.max.avg :
+* level.avg.avg : water level, average over the week, average over the stations
+* level.avg.max : water level, average over the week, max over the stations
+* level.range.max : range of water level values, max over the stations
+* flow.max.avg : flow, max over the week, average over the stations
 * daylight : daylight time with linear interpolation based on 7 locations spread ~ 1.5 latitude degrees apart 
 * X.surveys : 
 * Ae.prop :
@@ -62,6 +62,6 @@ All covariates are aggregated to be weekly statistics for the public health unit
 * bird.simpson : https://en.wikipedia.org/wiki/Diversity_index#Simpson_index
 
 #### Imputing and Average
-* Hydrometry: 
+* Hydrometry: This is daily data aggregated to the weekly scale. We average over the current week, the two weeks prior, and the two weeks after to impute a very small amount of missing covariates, predominantly in TSK public health unit. 
 * Weather: If a weather station is missing a covariate (temperature, precipitation), we find its 5 nearest neighbors and impute a distance-based weighted average. Some nearest neighbors may be missing as well, so this average may be over 1 or up to 5 values. In aggregating to the public health unit, we only use imputed covariates if these are the only ones available for the unit. For public health units without weather stations, we impute with a distance-based weighted average over 1 or up to 3 values. Units without weather stations are generally in dense urban areas (Greater Toronto), so we expect this spatial imputation is a reasonable approximation. 
 * Birds: Birding may fluctuate substantially on a weekly basis, so we average over the current and previous three weeks. This step imputes some missing values. For the remaining missing values, we impute using a median conditional on the public health unit and the epidemic week. For Shannon indices of 0 and Simpson indices of 1, we impute using the median conditional on the public health unit and the epidemic week. These values correspond to low birding effort (only one species observed). 
