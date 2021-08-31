@@ -6,6 +6,14 @@ This package facilitates Bayesian analysis for the time-varying occupancy with o
 
 ### WNV in Ontario
 
+#### Data Sources
+* Mosquitoes: trap data from Public Health Ontario; provided by Deborah Shutt, PhD
+* Hydrology: https://github.com/paleolimbot/hydatr
+* Weather: https://github.com/paleolimbot/rclimateca
+* Land: http://www.earthenv.org/landcover (EarthEnv)
+* Climate: https://datadryad.org/stash/dataset/doi:10.5061/dryad.s2v81 (MERRAclim)
+* Birds: https://ebird.org/science/use-ebird-data/download-ebird-data-products (eBird)
+
 #### Covariate Descriptions
 * intercept : all 1s
 * popdensity : population / area from 2016 Census of Canada
