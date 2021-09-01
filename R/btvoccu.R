@@ -33,7 +33,7 @@ btvoccu <- function(niter,
                     speffs = NULL, 
                     A = NULL,
                     logit = TRUE, 
-                    nchains = 1,
+                    nchains = 2,
                     print.interval = 1000){
 
   # data processing
