@@ -11,6 +11,7 @@ waic_score(
   sites = NULL,
   seasons = NULL,
   periods = NULL,
+  ndraws = 200,
   burnin = 0.5,
   thin = 1
 )
@@ -27,6 +28,8 @@ waic_score(
 \item{seasons}{vector (default \code{NULL} uses training seasons)}
 
 \item{periods}{vector (default \code{NULL} uses training periods)}
+
+\item{ndraws}{number of posterior draws}
 
 \item{burnin}{percent of posterior samples to burn}
 

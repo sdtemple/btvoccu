@@ -14,7 +14,7 @@ plot_btvoccu(
   burnin = 0.5,
   thin = 1,
   credible = c(0.025, 0.5, 0.975),
-  ndraws = 1000,
+  ndraws = 200,
   ribbons = TRUE,
   dots = FALSE,
   spline = FALSE,

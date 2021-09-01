@@ -12,7 +12,7 @@ posterior_check(
   seasons = NULL,
   periods = NULL,
   nrep = 100,
-  ndraws = 1000,
+  ndraws = 200,
   burnin = 0.5,
   thin = 1
 )

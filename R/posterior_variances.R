@@ -58,15 +58,16 @@ posterior_variances <- function(model, Sigmas, burnin = .5, thin = 1, credible =
     
     # format as coda mcmc object
     mcmc <- coda::mcmc.list()
-    chains <- apply(out[,keep,i,i], 1, as.numeric)
+    chains <- apply(out[,keep,i,i, drop=F], 1, as.numeric)
     for(k in 1:nchains){mcmc[[k]] <- coda::as.mcmc(chains[,k])}
     
     # check chain convergence
-    rhat <- coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]
+    rhat <- NA
+    if(nchains > 1){rhat <- coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]}
     
     # combine chains
     vec <- as.vector(mcmc[[1]])
-    for(k in 2:nchains){vec <- c(vec, as.vector(mcmc[[k]]))}
+    if(nchains > 1){for(k in 2:nchains){vec <- c(vec, as.vector(mcmc[[k]]))}}
     
     # store in table
     n <- n + 1

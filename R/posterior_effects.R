@@ -35,20 +35,30 @@ posterior_effects <- function(model, burnin = .5, thin = 1, credible = c(.025, .
       # combine chains
       combined <- combine_chains(model, names(model)[i], j, burnin, thin)
       
-      # convert to mcmc object for coda::gelman.diag
-      mcmc <- coda::mcmc.list()
-      for(k in 1:nchains){mcmc[[k]] <- coda::as.mcmc(model[[i]][k, keep, j])}
+      if(nchains > 1){
+        # convert to mcmc object for coda::gelman.diag
+        mcmc <- coda::mcmc.list()
+        for(k in 1:nchains){mcmc[[k]] <- coda::as.mcmc(model[[i]][k, keep, j])}
+        
+        # store in table
+        table <- rbind(table, c(getElement(model, nameidx)[j],
+                                quantile(combined, credible),mean(combined),
+                                coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]))
+      } else{
+        # store in table
+        table <- rbind(table, c(getElement(model, nameidx)[j],
+                                quantile(combined, credible),mean(combined),
+                                NA))
+      }
       
-      # store in table
-      table <- rbind(table, c(getElement(model, nameidx)[j],
-                              quantile(combined, credible),mean(combined),
-                              coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]))
       n <- n + 1
       rownames(table)[n] <- paste(substr(names(model)[i],
                                          1, (nchar(names(model)[i])-1)),
                                   j, sep = "")
+      
     }
   }
+  
   colnames(table) <- c("covariate", credible, "mean", "rhat")
   
   return(table)

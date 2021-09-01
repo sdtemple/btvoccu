@@ -29,7 +29,7 @@ posterior_check <- function(model,
                             seasons = NULL,
                             periods = NULL,
                             nrep = 100,
-                            ndraws = 1000,
+                            ndraws = 200,
                             burnin = .5,
                             thin = 1){
   

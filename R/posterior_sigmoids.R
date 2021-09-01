@@ -22,7 +22,7 @@ posterior_sigmoids <- function(model, x,
                                sites,
                                seasons,
                                periods,
-                               ndraws = 1000,
+                               ndraws = 200,
                                burnin = .5,
                                thin = 1){
   

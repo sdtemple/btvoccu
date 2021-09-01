@@ -33,7 +33,7 @@ btvoccu_predict <- function(model, x,
                             burnin = .5,
                             thin = 1,
                             credible = c(.025,.5,.975),
-                            ndraws = 1000,
+                            ndraws = 200,
                             spline = FALSE,
                             spline.predict = FALSE,
                             nknots = 5){

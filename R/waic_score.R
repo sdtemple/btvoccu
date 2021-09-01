@@ -8,6 +8,7 @@
 #' @param sites vector (default \code{NULL} uses training sites)
 #' @param seasons vector (default \code{NULL} uses training seasons)
 #' @param periods vector (default \code{NULL} uses training periods)
+#' @param ndraws number of posterior draws
 #' @param burnin percent of posterior samples to burn
 #' @param thin keep every nth posterior draw
 #'
@@ -22,6 +23,7 @@ waic_score <- function(model, x, y,
                        sites = NULL,
                        seasons = NULL,
                        periods = NULL,
+                       ndraws = 200,
                        burnin = .5,
                        thin = 1){
   
@@ -92,11 +94,11 @@ waic_score <- function(model, x, y,
   }
   
   # compute and store posterior glm output
-  occu <- array(NA, dim = c(dim(x)[1:3], nsample),
-                dimnames = list(sites, seasons, periods, 1:nsample))
-  det <- array(NA, dim = c(dim(x)[1:3], nsample),
-               dimnames = list(sites, seasons, periods, 1:nsample))
-  yll <- array(NA, dim = c(dim(y)[1:3], nsample))
+  occu <- array(NA, dim = c(dim(x)[1:3], ndraws),
+                dimnames = list(sites, seasons, periods, 1:ndraws))
+  det <- array(NA, dim = c(dim(x)[1:3], ndraws),
+               dimnames = list(sites, seasons, periods, 1:ndraws))
+  yll <- array(NA, dim = c(dim(y)[1:3], ndraws))
   if(is.null(M)){ # without spatial random effects
     for(i in 1:length(sites)){
       for(j in 1:length(seasons)){
@@ -104,9 +106,10 @@ waic_score <- function(model, x, y,
           if(is.na(y[i,j,k,1])){
             yll[i,j,k,] <- NA
           } else{
-            for(d in 1:nsample){
-              occueffs <- samples[[1]][d,]
-              deteffs <- samples[[2]][d,]
+            for(d in 1:ndraws){
+              sampleid <- sample(nsample, 1)
+              occueffs <- samples[[1]][sampleid,]
+              deteffs <- samples[[2]][sampleid,]
               occu[i,j,k,d] <- model$link(X[i,j,k,] %*% occueffs)
               det[i,j,k,d] <- model$link(W[i,j,k,] %*% deteffs)
               if(y[i,j,k,1]){
@@ -126,10 +129,11 @@ waic_score <- function(model, x, y,
           if(is.na(y[i,j,k,1])){
             yll[i,j,k,] <- NA
           } else{
-            for(d in 1:nsample){
-              occueffs <- samples[[1]][d,]
-              deteffs <- samples[[2]][d,]
-              speffs <- samples[[3]][d,]
+            for(d in 1:ndraws){
+              sampleid <- sample(nsample, 1)
+              occueffs <- samples[[1]][sampleid,]
+              deteffs <- samples[[2]][sampleid,]
+              speffs <- samples[[3]][sampleid,]
               occu[i,j,k,d] <- model$link(X[i,j,k,] %*% occueffs + M[i,j,k,] %*% speffs)
               det[i,j,k,d] <- model$link(W[i,j,k,] %*% deteffs)
               if(y[i,j,k,1]){
@@ -145,7 +149,7 @@ waic_score <- function(model, x, y,
   }
   
   m <- 0
-  llarray <- array(NA, dim = c(nsample, sum(!is.na(y))))
+  llarray <- array(NA, dim = c(ndraws, sum(!is.na(y))))
   for(i in 1:length(sites)){
     for(j in 1:length(seasons)){
       for(k in 1:length(periods)){

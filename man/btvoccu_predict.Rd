@@ -14,7 +14,7 @@ btvoccu_predict(
   burnin = 0.5,
   thin = 1,
   credible = c(0.025, 0.5, 0.975),
-  ndraws = 1000,
+  ndraws = 200,
   spline = FALSE,
   spline.predict = FALSE,
   nknots = 5

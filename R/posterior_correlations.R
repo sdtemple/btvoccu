@@ -31,17 +31,19 @@ posterior_correlations <- function(model, Sigmas, burnin = .5, thin = 1, credibl
       
       # format as coda mcmc object
       mcmc <- coda::mcmc.list()
-      chains <- apply(out[,keep,i,j] / sqrt(out[,keep,i,i] * out[,keep,j,j]),
+      chains <- apply(out[,keep,i,j, drop=F] / sqrt(out[,keep,i,i, drop=F] * out[,keep,j,j, drop=F]),
                       1, as.numeric)
-      
-      for(k in 1:dim(chains)[2]){mcmc[[k]] <- coda::as.mcmc(chains[,k])}
+      nchains <- dim(chains)[2]
+      for(k in 1:nchains){mcmc[[k]] <- coda::as.mcmc(chains[,k])}
       
       # check chain convergence
-      rhat <- coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]
+      rhat <-  NA
+      if(nchains > 1){rhat <- coda::gelman.diag(mcmc, autoburnin = F)[[1]][1]}
       
       # combine chains
       vec <- as.vector(mcmc[[1]])
-      for(k in 2:dim(chains)[2]){vec <- c(vec,as.vector(mcmc[[k]]))}
+      if(nchains > 1){for(k in 2:nchains){vec <- c(vec,as.vector(mcmc[[k]]))}}
+      
       
       # store in table
       n <- n + 1

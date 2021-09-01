@@ -10,7 +10,7 @@ posterior_sigmoids(
   sites,
   seasons,
   periods,
-  ndraws = 1000,
+  ndraws = 200,
   burnin = 0.5,
   thin = 1
 )
