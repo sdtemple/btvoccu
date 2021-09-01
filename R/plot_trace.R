@@ -46,5 +46,5 @@ plot_trace <- function(model, effects, mnridx, burnin = 0){
        col = colors[1],
        ylim = c(mn, mx),
        main = effects)
-  for(n in 2:model$nchains){lines(model[[mjridx]][n, burn, mnridx], col = colors[n])}
+  if(model$nchains > 1){for(n in 2:model$nchains){lines(model[[mjridx]][n, burn, mnridx], col = colors[n])}}
 }
