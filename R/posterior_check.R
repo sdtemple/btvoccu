@@ -148,12 +148,12 @@ posterior_check <- function(model,
     output[[6]] <- sd(yreppre)
     output[[7]] <- NULL
     names(output) <- c("histogram",
-                       "pval",
-                       "relativepresences",
+                       "pValue",
+                       "relativePresence",
                        "mse",
-                       "avgpresences",
-                       "sdpresences",
-                       "actualpresences")
+                       "avgPresence",
+                       "sdPresence",
+                       "actualPresence")
   }
   
   return(output)

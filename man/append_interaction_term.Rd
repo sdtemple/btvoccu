@@ -4,7 +4,13 @@
 \alias{append_interaction_term}
 \title{Append interaction term}
 \usage{
-append_interaction_term(x, covariate, predictor)
+append_interaction_term(
+  x,
+  covariate,
+  predictor,
+  fcn = function(a, b) {     a * b },
+  fname = "*"
+)
 }
 \arguments{
 \item{x}{numeric array}
@@ -12,6 +18,10 @@ append_interaction_term(x, covariate, predictor)
 \item{covariate}{character name}
 
 \item{predictor}{character name}
+
+\item{fcn}{function, default is to multiply}
+
+\item{fname}{function name}
 }
 \value{
 numeric array

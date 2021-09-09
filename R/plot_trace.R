@@ -24,11 +24,13 @@ plot_trace <- function(model, effects, mnridx, burnin = 0){
   # ylim
   mx <- max(model[[mjridx]][1, burn, mnridx])
   mn <- min(model[[mjridx]][1, burn, mnridx])
-  for(n in 2:model$nchains){
-    mx <- max(mx, model[[mjridx]][n, burn, mnridx])
-    mn <- min(mn, model[[mjridx]][n, burn, mnridx])
+  if(model$nchains > 1){
+    for(n in 2:model$nchains){
+      mx <- max(mx, model[[mjridx]][n, burn, mnridx])
+      mn <- min(mn, model[[mjridx]][n, burn, mnridx])
+    }
   }
-  
+
   # plot
   if(effects == "betas"){
     name <- "occueffs"

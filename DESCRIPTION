@@ -1,6 +1,6 @@
 Package: btvoccu
 Title: Bayesian Time-Varying Occupancy Modeling
-Version: 2.0
+Version: 2.1
 Authors@R: 
     person(given = "Seth",
            family = "Temple",
@@ -8,7 +8,7 @@ Authors@R:
            email = "sdtemple@uw.edu",
            comment = c(ORCID = "0000-0002-7651-6527"))
 Description: This package implements Gibbs sampling for Bayesian logistic and probit regressions in the context of time-varying occupancy models.
-Imports: mvtnorm, truncnorm, BayesLogit, faraway, abind, MCMCpack, coda, ggplot2, grDevices, rcartocolor, factoextra
+Imports: BayesLogit, mvtnorm, truncnorm, faraway, abind, MCMCpack, coda, factoextra, rgdal, rgeos, sp, sf, ggplot2, tmap, tmaptools, grid, grDevices, rcartocolor, magick
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
