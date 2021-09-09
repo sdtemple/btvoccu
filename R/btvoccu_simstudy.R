@@ -7,6 +7,8 @@
 #' @param nperiods number of periods
 #' @param beta vector of occupancy effects
 #' @param alpha vector of detection effects
+#' @param occusite means for site-specific occupancy covariates
+#' @param detsite means for site-specific detection covariates
 #' @param occutime array of time-varying occupancy covariates
 #' @param dettime array of time-varying detection covariates
 #' @param naprob percent of NAs in simulated data
@@ -20,7 +22,9 @@ btvoccu_simstudy <- function(nsites,
                              nseasons, 
                              nperiods,
                              beta, 
-                             alpha, 
+                             alpha,
+                             occusite,
+                             detsite,
                              occutime,
                              dettime,
                              naprob = 0, 
@@ -34,6 +38,8 @@ btvoccu_simstudy <- function(nsites,
   la <- length(alpha) - rat - 1
   
   # data input checks
+  if(lb != length(occusite)){print("occusite has wrong number of means")}
+  if(la != length(detsite)){print("detsite has wrong number of means")}
   if(nperiods != ncol(occutime)){print("occutime must have as many columns as nperiods"); return()}
   if(nperiods != ncol(dettime)){print("dettime must have as many columns as nperiods"); return()}
   if(lb < 0){"occutime has too many rows"; return()}
@@ -45,10 +51,10 @@ btvoccu_simstudy <- function(nsites,
   X <- array(dim = c(nsites, nseasons, nperiods, length(beta)))
   X[,,,1] <- 1 # intercept
   for(i in 1:nsites){
+    X[i,,,2:(lb+1)] <- mvtnorm::rmvnorm(1, occusite, noise * diag(lb)) # site-specific
     for(j in 1:nseasons){
       for(l in 1:rbt){X[i,j,,(lb+1+l)] <- occutime[l,] + rnorm(nperiods, sd = noise)} # time-varying
       for(k in 1:nperiods){
-        X[i,j,k,2:(lb+1)] <- mvtnorm::rmvnorm(1, rep(0, lb), noise * diag(lb))
         if(probit){
           psi[i,j,k] <- pnorm(beta %*% X[i,j,k,])
         } else{
@@ -63,10 +69,10 @@ btvoccu_simstudy <- function(nsites,
   W <- array(dim = c(nsites, nseasons, nperiods, length(alpha)))
   W[,,,1] <- 1 # intercept
   for(i in 1:nsites){
+    W[i,,,2:(la+1)] <- mvtnorm::rmvnorm(1, detsite, noise * diag(la)) # site-specific
     for(j in 1:nseasons){
       for(l in 1:rat){W[i,j,,(la+1+l)] <- dettime[l,] + rnorm(nperiods, sd = noise)} # time-varying
       for(k in 1:nperiods){
-        W[i,j,k,2:(la+1)] <- mvtnorm::rmvnorm(1, rep(0, la), noise * diag(la))
         if(probit){
           p[i,j,k] <- pnorm(alpha %*% W[i,j,k,])
         } else{
@@ -101,17 +107,17 @@ btvoccu_simstudy <- function(nsites,
   yna <- replace(y, is.na(y), 0)
   
   # naming
-  sites <- paste("site", 1:nsites, sep = "")
+  sites <- 1:nsites
   dimnames(y)[[1]] <- sites
   dimnames(X)[[1]] <- sites
   dimnames(W)[[1]] <- sites
   
-  seasons <- paste("season", 1:nseasons, sep = "")
+  seasons <- 1:nseasons
   dimnames(y)[[2]] <- seasons
   dimnames(X)[[2]] <- seasons
   dimnames(W)[[2]] <- seasons
   
-  periods <- paste("period", 1:nperiods, sep = "")
+  periods <- 1:nperiods
   dimnames(y)[[3]] <- periods
   dimnames(X)[[3]] <- periods
   dimnames(W)[[3]] <- periods

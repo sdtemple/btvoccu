@@ -128,7 +128,13 @@ posterior_check <- function(model,
     output[[5]] <- mean(yreppre)
     output[[6]] <- sd(yreppre)
     output[[7]] <- ypre
-    names(output) <- c("histogram","pval","relativepresence","mse","avgpresences", "sdpresences","actualpresences")
+    names(output) <- c("histogram",
+                       "pValue",
+                       "relativePresence",
+                       "mse",
+                       "avgPresence",
+                       "sdPresence",
+                       "actualPresence")
   } else{
     output[[1]] <- hist(yreppre,
                         main = NULL,

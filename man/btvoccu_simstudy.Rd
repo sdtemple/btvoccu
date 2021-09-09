@@ -10,6 +10,8 @@ btvoccu_simstudy(
   nperiods,
   beta,
   alpha,
+  occusite,
+  detsite,
   occutime,
   dettime,
   naprob = 0,
@@ -27,6 +29,10 @@ btvoccu_simstudy(
 \item{beta}{vector of occupancy effects}
 
 \item{alpha}{vector of detection effects}
+
+\item{occusite}{means for site-specific occupancy covariates}
+
+\item{detsite}{means for site-specific detection covariates}
 
 \item{occutime}{array of time-varying occupancy covariates}
 

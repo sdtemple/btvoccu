@@ -1,0 +1,118 @@
+---
+title: "btvoccu Vignette"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(btvoccu)
+set.seed(9102021)
+```
+
+First, we will simulate data that assumes the time-varying occupancy in its data-generating process. The study in its design will have 10 sites, 5 seasons, and 20 periods. For occupancy and detection, the truth will be that there are intercepts, one site-specific covariate, and one time-varying covariate. \beta and \alpha effects are (2, 1, 1) and (-1/2, 0, 1). Below we plot the time-varying covariate for the occupancy component; the detection component has a parabolic nature as well.
+```{r}
+# study design
+nsites <- 10
+nseasons <- 5
+nperiods <- 20
+
+# effects
+betas <- c(2, 1, 1)
+alphas <- c(-1/2, 0, 1)
+
+# site-specific means
+occusite <- 0
+detsite <- -1
+
+# time-varying covariates
+occutime <- array(NA, dim = c(1, 20))
+occutime[1,] <- sin(2 * pi * 1:20 / 40 + pi)
+dettime <- array(NA, dim = c(1, 20))
+dettime[1,] <- sin(2 * pi * 1:20 / 40)
+
+plot(occutime[1,], type = "l", ylab = "Time-Varying Occupancy Covariate")
+```
+
+We will save the simulated data in the variable `d`.
+```{r}
+d <- btvoccu_simstudy(nsites,
+                      nseasons,
+                      nperiods,
+                      betas,
+                      alphas,
+                      occusite,
+                      detsite,
+                      occutime,
+                      dettime,
+                      noise = 0.25)
+# access items in list
+y <- d$y
+sites <- d$sites
+seasons <- d$seasons
+periods <- d$periods
+bvar <- d$occueffs
+avar <- d$deteffs
+XW <- abind::abind(d$X, d$W)
+```
+
+The package `btvoccu` expects response and covariate arrays to be provided as 4-dimensional arrays. The dimensions are as follows: (1) site, (2) season, (3) period, and (4) covariate. Note as well that there are names along the dimensions. To fit models, you pass in the response and covariate arrays with names for the occupancy and detection effects.
+```{r}
+print(dimnames(XW)[[1]])
+print(dimnames(XW)[[2]])
+print(dimnames(XW)[[3]])
+print(dimnames(XW)[[4]])
+```
+
+Using the `abind` package, we can explore transformations and interactions with the covariate array. Check out the documentation for other `append` functions, like spatial random effects, PCs, and lagging.
+```{r}
+XW <- append_transformed_term(XW, "bvar2", function(x){2 * x}, "twice.")
+XW <- append_interaction_term(XW, "bvar2", "bvar3")
+```
+
+Next, we fit a Bayesian time-varying occupancy model. This may take a minute or so. The model object is saved in the variable `m`. In this chunk, we use the main function `btvoccu`. Models with spatial random effects can be constructed by passing in an adjacency matrix `A` and a vector of names `speffs` for covariates in the 4-dimensional array. Probit regression models can be fit by switching the logical option `logit` to false.
+```{r}
+# MCMC parameters
+niter <- 1000
+nchains <- 2
+print.interval <- 100
+
+# fitting model
+m <- btvoccu(niter, XW, y, sites, seasons, periods, bvar, avar, 
+               nchains = nchains, print.interval = print.interval)
+```
+
+After fitting a model, there are a variety of diagnostics available, including posterior summaries, trace plots, and the Watanabe Akaike information criterion.
+```{r}
+posterior_effects(m)
+```
+```{r}
+plot_trace(m, "betas", 3)
+```
+```{r}
+plot_trace(m, "alphas", 1)
+```
+```{r}
+waic_score(m, XW, y) # see Bayesian Data Analysis (version 3)
+```
+
+Another diagnostic is a posterior predictive check. These are discussed in the popular book \textit{Bayesian Data Analysis} by Gelman et al. We developed a custom posterior predictive check for our setting: relative presence. Essentially, we simulate presence-absence data many times based on our fit model, and we measure average presence against the actual presence. We can run these posterior predictive checks for any subset of (site, season, period) so as to diagnose where and when the model excels/fails.
+```{r}
+ppc <- posterior_check(m, XW, y)
+print(ppc$relativePresence)
+```
+
+Additionally, we made plotting utilities with `ggplot2`. These are available through the functions `plot_btvoccu` and `plot_covariate`. For model predictions, these can be occupancy, detection, or presence probabilities.
+```{r}
+plot_covariate(XW, 1:2, 1, periods, "bvar3", "Time-Varying Occupance Covariate")
+```
+```{r}
+plot_btvoccu(m, XW, 1:2, 1, periods)
+```
+```{r}
+plot_btvoccu(m, XW, 1:2, 1, periods, "Detection")
+```
+
+Finally, our package includes other features: mapping functions given a shapefile, subsetting 4-dimensional arrays, train-test splitting 4-dimensional arrays, and combining independent MCMC chains. These are utilized in our case study on West Nile virus in Ontario, Canada. We implore you to review the case study and the package documentation for more examples and details.
