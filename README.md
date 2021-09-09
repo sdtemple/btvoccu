@@ -17,7 +17,11 @@ We provide a vignette as a practical tutorial with simulated data. In general, m
 9. Fit final model(s) with training and validation data (`btvoccu()`)
 10. Check MCMC diagnostics (`plot_trace()`, `posterior_effects()`, `posterior_correlations()`, `posterior_variances()`)
 11. Evaluate models on testing dataset (`waic_score()`, `posterior_check()`)
-12. Plot (`plot_btvoccu()`, `plot_covariate()`, your own mapping code)
+12. Plot (`plot_btvoccu()`, `plot_covariate()`, mapping functions)
+
+Some mapping functions are `btvoccu_map`, `btvoccu_map_inset`, `btvoccu_movie`, `btvoccu_movie_inset`, `covariate_map`, and `covariate_map_inset`. Movies use the `magick` package to stitch together static .png files into a .gif animation. These functions may have defaults chosen for the Ontario, Canada shapefile. It may be necessary to modify the source code to customize maps.
+
+Two other utility functions are: `btvoccu_chain` and `btvoccu_simstudy`. The first can combine `btvoccu` model objects from different independent chains. (This is a lazy implementation for parallelization.) The second can facilitate simulation studies for time-varying occupancy models. 
 
 ### WNV in Ontario
 
