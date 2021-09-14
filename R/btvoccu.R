@@ -84,8 +84,9 @@ btvoccu <- function(niter,
 
         # matrix algebra
         kappa <- y - 1/2
-        V <- solve(solve(Sigmabeta) + crossprod(X, diag(ya) %*% X))
-        m <- V %*% (solve(Sigmabeta) %*% mubeta  + crossprod(X, kappa))
+        invSigmabeta <- solve(Sigmabeta)
+        V <- solve(invSigmabeta + crossprod(X, diag(ya) %*% X))
+        m <- V %*% (invSigmabeta %*% mubeta  + crossprod(X, kappa))
 
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
       }
@@ -178,8 +179,9 @@ btvoccu <- function(niter,
         }
         
         # matrix algebra
-        V <- solve(solve(Sigmabeta) + XtX)
-        m <- V %*% (solve(Sigmabeta) %*% mubeta  + crossprod(X, ya))
+        invSigmabeta <- solve(Sigmabeta)
+        V <- solve(invSigmabeta + XtX)
+        m <- V %*% (invSigmabeta %*% mubeta  + crossprod(X, ya))
         
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
       }
@@ -319,6 +321,7 @@ btvoccu <- function(niter,
       stop('Provide an adjacency matrix.')
     }
     Qs <- crossprod(M[,1,1,], icarQ(A)) %*% M[,1,1,]
+    invQs <- solve(Qs)
     
     # samplers
     gibbs_logit_btvspoccu <- function(niter,
@@ -348,11 +351,13 @@ btvoccu <- function(niter,
 
         # matrix algebra
         kappa <- y - 1/2
-        Vbeta <- solve(solve(Sigmabeta) + crossprod(X, diag(ya) %*% X))
-        mbeta <- Vbeta %*% (solve(Sigmabeta) %*% mubeta  + 
+        invSigmabeta <- solve(Sigmabeta)
+        Vbeta <- solve(invSigmabeta + crossprod(X, diag(ya) %*% X))
+        mbeta <- Vbeta %*% (invSigmabeta %*% mubeta  + 
                               crossprod(X, (kappa - (diag(ya) %*% M %*% theta))))
-        Vtheta <- solve(solve(Sigmatheta) + crossprod(M, diag(ya) %*% M))
-        mtheta <- Vtheta %*% (solve(Sigmatheta) %*% mutheta +
+        invSigmatheta <- solve(Sigmatheta)
+        Vtheta <- solve(invSigmatheta + crossprod(M, diag(ya) %*% M))
+        mtheta <- Vtheta %*% (invSigmatheta %*% mutheta +
                                 crossprod(M, (kappa - (diag(ya) %*% X %*% beta))))
 
         return(list(beta = mvtnorm::rmvnorm(1, mean = mbeta, sigma = Vbeta),
@@ -368,9 +373,10 @@ btvoccu <- function(niter,
 
         # matrix algebra
         kappa <- y - 1/2
-        V <- solve(solve(Sigmabeta) +
+        invSigmabeta <- solve(Sigmabeta)
+        V <- solve(invSigmabeta +
                      crossprod(X, diag(ya) %*% X))
-        m <- V %*% (solve(Sigmabeta) %*% mubeta  +
+        m <- V %*% (invSigmabeta %*% mubeta  +
                       crossprod(X, kappa))
 
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
@@ -435,11 +441,11 @@ btvoccu <- function(niter,
         }
 
         z <- z_update(yobs, Xobs, Mobs, Wobs, betas[(n-1),], thetas[(n-1),], alphas[(n-1),])
-        spdraw <- sp_mvn_update(z, Xobs, betas[(n-1),], mubeta, Sigmabetas[(n-1),,], Mobs, thetas[(n-1),], mutheta, sigmathetas[(n-1),] * solve(Qs))
+        spdraw <- sp_mvn_update(z, Xobs, betas[(n-1),], mubeta, Sigmabetas[(n-1),,], Mobs, thetas[(n-1),], mutheta, sigmathetas[(n-1),] * invQs)
         betas[n,] <- spdraw$beta
         Sigmabetas[n,,] <- iw_update(betas[n,], nubeta, Psibeta)
         thetas[n,] <- spdraw$theta
-        sigmathetas[n,] <- iga_update(thetas[n,], solve(Qs), atheta, btheta)
+        sigmathetas[n,] <- iga_update(thetas[n,], invQs, atheta, btheta)
 
         # subset to occupied sites
         z1 <- which(z == 1, arr.ind = T)
@@ -481,10 +487,12 @@ btvoccu <- function(niter,
         }
 
         # matrix algebra
-        Vbeta <- solve(solve(Sigmabeta) + XtX)
-        mbeta <- Vbeta %*% (solve(Sigmabeta) %*% mubeta  + crossprod(X, (ya - (M %*% theta))))
-        Vtheta <- solve(solve(Sigmatheta) + MtM)
-        mtheta <- Vtheta %*% (solve(Sigmatheta) %*% mutheta + crossprod(M, (ya - (X %*% beta))))
+        invSigmabeta <- solve(Sigmabeta)
+        Vbeta <- solve(invSigmabeta + XtX)
+        mbeta <- Vbeta %*% (invSigmabeta %*% mubeta  + crossprod(X, (ya - (M %*% theta))))
+        invSigmatheta <- solve(Sigmatheta)
+        Vtheta <- solve(invSigmatheta + MtM)
+        mtheta <- Vtheta %*% (invSigmatheta %*% mutheta + crossprod(M, (ya - (X %*% beta))))
 
         return(list(beta = mvtnorm::rmvnorm(1, mean = mbeta, sigma = Vbeta),
                     theta = mvtnorm::rmvnorm(1, mean = mtheta, sigma = Vtheta)))
@@ -503,8 +511,9 @@ btvoccu <- function(niter,
         }
 
         # matrix algebra
-        V <- solve(solve(Sigmabeta) + XtX)
-        m <- V %*% (solve(Sigmabeta) %*% mubeta + crossprod(X, ya))
+        invSigmabeta <- solve(Sigmabeta)
+        V <- solve(invSigmabeta + XtX)
+        m <- V %*% (invSigmabeta %*% mubeta + crossprod(X, ya))
 
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
       }
@@ -567,11 +576,11 @@ btvoccu <- function(niter,
       for(n in 2:niter){
         if((n %% print.interval) == 0){print(n)}
         z <- z_update(yobs, Xobs, Mobs, Wobs, betas[(n-1),], thetas[(n-1),], alphas[(n-1),])
-        spdraw <- sp_mvn_update(z, Xobs, betas[(n-1),], mubeta, Sigmabetas[(n-1),,], XtX, Mobs, thetas[(n-1),], mutheta, sigmathetas[(n-1),] * solve(Qs), MtM)
+        spdraw <- sp_mvn_update(z, Xobs, betas[(n-1),], mubeta, Sigmabetas[(n-1),,], XtX, Mobs, thetas[(n-1),], mutheta, sigmathetas[(n-1),] * invQs, MtM)
         betas[n,] <- spdraw$beta
         Sigmabetas[n,,] <- iw_update(betas[n,], nubeta, Psibeta)
         thetas[n,] <- spdraw$theta
-        sigmathetas[n,] <- iga_update(thetas[n,], solve(Qs), atheta, btheta)
+        sigmathetas[n,] <- iga_update(thetas[n,], invQs, atheta, btheta)
 
         # subset to occupied sites
         z1 <- which(z == 1, arr.ind = T)
