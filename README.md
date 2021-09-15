@@ -25,6 +25,8 @@ Two other utility functions are: `btvoccu_chain` and `btvoccu_simstudy`. The fir
 
 ### WNV in Ontario
 
+Files for the analysis of WNV in Ontario's mosquito populations can be found under the folder `wnv/`. Various R scripts for the analysis with set random seeds are there. We also provide animations for the 2016 season under `wnv/movies/`. Additional details about the data are below.
+
 #### Data Sources
 * Mosquitoes: trap data from Public Health Ontario; provided by Deborah Shutt, PhD
 * Hydrometry: https://github.com/paleolimbot/hydatr
