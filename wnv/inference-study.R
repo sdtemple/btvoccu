@@ -1,9 +1,9 @@
 # btvoccu Inference Study
 # Seth Temple, sdtemple@lanl.gov
-# September 9, 2021
+# September 27, 2021
 
 library(btvoccu)
-set.seed(992021)
+set.seed(9272021)
 
 # Common Inputs -----------------------------------------------------------
 
@@ -114,13 +114,13 @@ saveRDS(rp, "simstudy/vector2.rds")
 # Results -----------------------------------------------------------------
 
 # inference table
+library(xtable)
 t1 <- readRDS("simstudy/table1.rds")
 t2 <- readRDS("simstudy/table2.rds")
 t0 <- matrix(c(betas, alphas), ncol = 1)
 t1 <- apply(t1, c(1,3), mean)
 t2 <- apply(t2, c(1,3), mean)
 out <- cbind(t0, t1, t2)
-library(xtable)
 xtable(out, digits = 3)
 
 # predictive performance
