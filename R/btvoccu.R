@@ -23,17 +23,17 @@
 #' btvoccu(5000, c("A","B","C","D"), 2002:2005, 20:40, c("intercept", "temperature", "precipitation"), c("intercept", "visits"))
 #'
 #' @export
-btvoccu <- function(niter, 
+btvoccu <- function(niter,
                     x, y,
-                    sites, 
-                    seasons, 
+                    sites,
+                    seasons,
                     periods,
-                    occueffs, 
-                    deteffs, 
-                    speffs = NULL, 
+                    occueffs,
+                    deteffs,
+                    speffs = NULL,
                     A = NULL,
-                    logit = TRUE, 
-                    nchains = 2,
+                    logit = TRUE,
+                    nchains = 1,
                     print.interval = 1000){
 
   # data processing
@@ -55,15 +55,13 @@ btvoccu <- function(niter,
 
   # local functions
   iw_update <- function(beta, nu, Psi){return(MCMCpack::riwish(1 + nu, Psi + tcrossprod(beta, beta)))}
-  iga_update <- function(theta, Sigma, a, b){
-    return(MCMCpack::rinvgamma(1, a + length(theta) / 2, b + crossprod(theta, Sigma) %*% theta / 2))}
+  iga_update <- function(theta, Sigma, a, b){return(MCMCpack::rinvgamma(1, a + length(theta) / 2, b + crossprod(theta, Sigma) %*% theta / 2))}
 
   # models
-  if(is.null(M)){ # without spatial random effect
-    
+  if(is.null(M)){ # without spatial random effects
     # samplers
     gibbs_logit_btvoccu <- function(niter,
-                                    y,
+                                    y, 
                                     X,
                                     W,
                                     mubeta,
@@ -114,7 +112,7 @@ btvoccu <- function(niter,
       Sigmabetas[1,,] <- iw_update(mubeta, nubeta, Psibeta)
       Sigmaalphas <- array(NA, dim = c(niter, length(mualpha), length(mualpha)))
       Sigmaalphas[1,,] <- iw_update(mualpha, nualpha, Psialpha)
-      
+
       # flatten arrays, removing NAs from the start
       ynna <- !is.na(y)
       nobs <- sum(ynna)
@@ -147,14 +145,13 @@ btvoccu <- function(niter,
         y1 <- yobs[z1]
         W1 <- Wobs[z1,, drop = F]
         alphas[n,] <- mvn_update(y1, W1, alphas[(n-1),], mualpha, Sigmaalphas[(n-1),,])
-        Sigmaalphas[n,,] <- iw_update(alphas[n,], nualpha,Psialpha)
+        Sigmaalphas[n,,] <- iw_update(alphas[n,], nualpha, Psialpha)
       }
-      
       return(list(betas = betas, alphas = alphas, Sigmabetas = Sigmabetas, Sigmaalphas = Sigmaalphas))
     }
 
     gibbs_probit_btvoccu <- function(niter,
-                                     y,
+                                     y, 
                                      X,
                                      W,
                                      mubeta,
@@ -176,11 +173,11 @@ btvoccu <- function(niter,
             ya[i] <- truncnorm::rtruncnorm(1, a = -Inf, b = 0, mean = X[i,] %*% beta, sd = 1)
           }
         }
-        
+
         # matrix algebra
         V <- solve(solve(Sigmabeta) + XtX)
         m <- V %*% (solve(Sigmabeta) %*% mubeta  + crossprod(X, ya))
-        
+
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
       }
 
@@ -195,6 +192,7 @@ btvoccu <- function(niter,
             z[i] <- rbinom(1, 1, exp(lognum - logden))
           }
         }
+
         return(z)
       }
 
@@ -243,7 +241,6 @@ btvoccu <- function(niter,
         alphas[n,] <- mvn_update(y1, W1, alphas[(n-1),], mualpha, Sigmaalphas[(n-1),,], crossprod(W1, W1))
         Sigmaalphas[n,,] <- iw_update(alphas[n,], nualpha, Psialpha)
       }
-      
       return(list(betas = betas, alphas = alphas, Sigmabetas = Sigmabetas, Sigmaalphas = Sigmaalphas))
     }
 
@@ -312,14 +309,16 @@ btvoccu <- function(niter,
                        'niter',
                        'nchains',
                        'link')
-    
     return(output)
+
   } else{ # with spatial random effects
+
     if(is.null(A)){
       stop('Provide an adjacency matrix.')
     }
+
     Qs <- crossprod(M[,1,1,], icarQ(A)) %*% M[,1,1,]
-    
+
     # samplers
     gibbs_logit_btvspoccu <- function(niter,
                                       y,
@@ -352,12 +351,13 @@ btvoccu <- function(niter,
         mbeta <- Vbeta %*% (solve(Sigmabeta) %*% mubeta  + 
                               crossprod(X, (kappa - (diag(ya) %*% M %*% theta))))
         Vtheta <- solve(solve(Sigmatheta) + crossprod(M, diag(ya) %*% M))
-        mtheta <- Vtheta %*% (solve(Sigmatheta) %*% mutheta +
+        mtheta <- Vtheta %*% (solve(Sigmatheta) %*% mutheta + 
                                 crossprod(M, (kappa - (diag(ya) %*% X %*% beta))))
 
         return(list(beta = mvtnorm::rmvnorm(1, mean = mbeta, sigma = Vbeta),
                     theta = mvtnorm::rmvnorm(1, mean = mtheta, sigma = Vtheta)))
       }
+
 
       mvn_update <- function(y, X, beta, mubeta, Sigmabeta){
         # sample augmented variable
@@ -368,10 +368,8 @@ btvoccu <- function(niter,
 
         # matrix algebra
         kappa <- y - 1/2
-        V <- solve(solve(Sigmabeta) +
-                     crossprod(X, diag(ya) %*% X))
-        m <- V %*% (solve(Sigmabeta) %*% mubeta  +
-                      crossprod(X, kappa))
+        V <- solve(solve(Sigmabeta) + crossprod(X, diag(ya) %*% X))
+        m <- V %*% (solve(Sigmabeta) %*% mubeta  + crossprod(X, kappa))
 
         return(mvtnorm::rmvnorm(1, mean = m, sigma = V))
       }
@@ -430,10 +428,7 @@ btvoccu <- function(niter,
 
       # gibbs sampling
       for(n in 2:niter){
-        if((n %% print.interval) == 0){
-          print(n)
-        }
-
+        if((n %% print.interval) == 0){print(n)}
         z <- z_update(yobs, Xobs, Mobs, Wobs, betas[(n-1),], thetas[(n-1),], alphas[(n-1),])
         spdraw <- sp_mvn_update(z, Xobs, betas[(n-1),], mubeta, Sigmabetas[(n-1),,], Mobs, thetas[(n-1),], mutheta, sigmathetas[(n-1),] * solve(Qs))
         betas[n,] <- spdraw$beta
@@ -521,7 +516,6 @@ btvoccu <- function(niter,
             z[i] <- rbinom(1, 1, exp(lognum - logden))
           }
         }
-        
         return(z)
       }
 
@@ -602,7 +596,6 @@ btvoccu <- function(niter,
     nualpha <- dim(W)[4] + 1
     Psialpha <- diag(dim(W)[4])
 
-
     # sampling
     output <- list()
     betas <- array(NA, dim = c(nchains, niter, length(mubeta)))
@@ -611,6 +604,7 @@ btvoccu <- function(niter,
     Sigmabetas <- array(NA, dim = c(nchains, niter, length(mubeta), length(mubeta)))
     sigmathetas <- array(NA, dim = c(nchains, niter, 1))
     Sigmaalphas <- array(NA, dim = c(nchains, niter, length(mualpha), length(mualpha)))
+
     for(n in 1:nchains){
       print(paste('Chain', n))
       sample <- sampler(niter,
@@ -671,9 +665,9 @@ btvoccu <- function(niter,
                        'periods',
                        'niter',
                        'nchains',
-                       'link'
-                       )
+                       'link')
 
     return(output)
+
   }
 }

@@ -16,7 +16,7 @@ btvoccu(
   speffs = NULL,
   A = NULL,
   logit = TRUE,
-  nchains = 2,
+  nchains = 1,
   print.interval = 1000
 )
 }
