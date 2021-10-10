@@ -28,7 +28,7 @@ btvoccu_simstudy <- function(nsites,
                              occutime,
                              dettime,
                              naprob = 0, 
-                             noise = 1,
+                             noise = 1/4,
                              probit = F){
   
   # setup
@@ -51,14 +51,14 @@ btvoccu_simstudy <- function(nsites,
   X <- array(dim = c(nsites, nseasons, nperiods, length(beta)))
   X[,,,1] <- 1 # intercept
   for(i in 1:nsites){
-    X[i,,,2:(lb+1)] <- mvtnorm::rmvnorm(1, occusite, noise * diag(lb)) # site-specific
+    X[i,,,2:(lb+1)] <- mvtnorm::rmvnorm(1, occusite, occusite / 4 * diag(lb)) # site-specific
     for(j in 1:nseasons){
-      for(l in 1:rbt){X[i,j,,(lb+1+l)] <- occutime[l,] + rnorm(nperiods, sd = noise)} # time-varying
+      for(l in 1:rbt){X[i,j,,(lb+1+l)] <- occutime[l,] + rnorm(nperiods, sd = noise / 10)} # time-varying
       for(k in 1:nperiods){
         if(probit){
-          psi[i,j,k] <- pnorm(beta %*% X[i,j,k,])
+          psi[i,j,k] <- pnorm(beta %*% X[i,j,k,] + rnorm(1, sd = noise))
         } else{
-          psi[i,j,k] <- faraway::ilogit(beta %*% X[i,j,k,])
+          psi[i,j,k] <- faraway::ilogit(beta %*% X[i,j,k,] + rnorm(1, sd = noise))
         }
       }
     }
@@ -69,14 +69,14 @@ btvoccu_simstudy <- function(nsites,
   W <- array(dim = c(nsites, nseasons, nperiods, length(alpha)))
   W[,,,1] <- 1 # intercept
   for(i in 1:nsites){
-    W[i,,,2:(la+1)] <- mvtnorm::rmvnorm(1, detsite, noise * diag(la)) # site-specific
+    W[i,,,2:(la+1)] <- mvtnorm::rmvnorm(1, detsite, detsite / 4 * diag(la)) # site-specific
     for(j in 1:nseasons){
-      for(l in 1:rat){W[i,j,,(la+1+l)] <- dettime[l,] + rnorm(nperiods, sd = noise)} # time-varying
+      for(l in 1:rat){W[i,j,,(la+1+l)] <- dettime[l,] + rnorm(nperiods, sd = noise / 10)} # time-varying
       for(k in 1:nperiods){
         if(probit){
-          p[i,j,k] <- pnorm(alpha %*% W[i,j,k,])
+          p[i,j,k] <- pnorm(alpha %*% W[i,j,k,] + rnorm(1, sd = noise))
         } else{
-          p[i,j,k] <- faraway::ilogit(alpha %*% W[i,j,k,])
+          p[i,j,k] <- faraway::ilogit(alpha %*% W[i,j,k,] + rnorm(1, sd = noise))
         }
       }
     }
@@ -133,6 +133,8 @@ btvoccu_simstudy <- function(nsites,
               na=na, 
               X=X, 
               W=W,
+              p=p,
+              psi=psi,
               nsites=nsites, 
               nseasons=nseasons, 
               nperiods=nperiods,

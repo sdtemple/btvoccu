@@ -15,7 +15,7 @@ btvoccu_simstudy(
   occutime,
   dettime,
   naprob = 0,
-  noise = 1,
+  noise = 1/4,
   probit = F
 )
 }
