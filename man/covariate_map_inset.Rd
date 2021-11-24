@@ -22,13 +22,20 @@ covariate_map_inset(
   timestamp = F,
   seasononly = F,
   inset.x = 0.95,
-  inset.y = 0.05,
-  inset.width = 0.4,
+  inset.y = 0.1,
+  inset.width = 0.35,
   legend.position = c("left", "top"),
   title.position = c("right", "top"),
   title.size = 0.8,
   legend.title.size = 0.8,
-  legend.text.size = 0.6
+  legend.text.size = 0.6,
+  xlab.size = 0.8,
+  ylab.size = 0.8,
+  dots.size = 0.04,
+  cities.text = "name",
+  cities.just = "top",
+  cities.size = 0.8,
+  cities.col = "black"
 )
 }
 \arguments{
@@ -79,6 +86,20 @@ covariate_map_inset(
 \item{legend.title.size}{see \code{tmap::tm_layout()}}
 
 \item{legend.text.size}{see \code{tmap::tm_layout()}}
+
+\item{xlab.size}{see \code{tmap::tm_xlab()}}
+
+\item{ylab.size}{see \code{tmap::tm_ylab()}}
+
+\item{dots.size}{see \code{tmap::tm_dots()}}
+
+\item{cities.text}{see \code{tmap::tm_text()}}
+
+\item{cities.just}{see \code{tmap::tm_text()}}
+
+\item{cities.size}{see \code{tmap::tm_text()}}
+
+\item{cities.col}{see \code{tmap::tm_text()}}
 }
 \value{
 \code{tmap} object

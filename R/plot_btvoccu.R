@@ -20,6 +20,9 @@
 #' @param nknots see \code{smooth.spline()}
 #' @param xaxis character: x-axis label
 #' @param legendtile character: legend label
+#' @param font.size see \code{theme_classic()}
+#' @param legend.key.width see \code{theme()}
+#' @param legend.key.height see \code{theme()}
 #'
 #' @return \code{ggplot} object
 #' 
@@ -47,7 +50,10 @@ plot_btvoccu <- function(model,
                          spline.predict = FALSE,
                          nknots = 5,
                          xaxis = "Period",
-                         legendtitle = "Site"){
+                         legendtitle = "Site",
+                         font.size = 8,
+                         legend.key.width = 2,
+                         legend.key.height = 0){
   
   df <- btvoccu_predict(model,
                         x,
@@ -71,7 +77,9 @@ plot_btvoccu <- function(model,
           ggplot2::geom_line() +
           ggplot2::geom_point(size = 1, show.legend = F) +
           ggplot2::geom_ribbon(ggplot2::aes(ymin = Lower, ymax = Upper), alpha = .1, linetype = 2, show.legend = F) +
-          ggplot2::theme_classic() +
+          ggplot2::theme_classic(base_size = font.size) +
+          ggplot2::theme(legend.key.height = ggplot2::unit(legend.key.height, "mm"), 
+                         legend.key.width = ggplot2::unit(legend.key.width, "mm")) + 
           ggplot2::labs(x = xaxis, y = value, colour = legendtitle) +
           ggplot2::scale_y_continuous(limits = c(0, 1)) # robust to splining
       )
@@ -80,7 +88,9 @@ plot_btvoccu <- function(model,
         plt +
           ggplot2::geom_line() +
           ggplot2::geom_point(size = 1, show.legend = F) +
-          ggplot2::theme_classic() +
+          ggplot2::theme_classic(base_size = font.size) +
+          ggplot2::theme(legend.key.height = ggplot2::unit(legend.key.height, "mm"), 
+                         legend.key.width = ggplot2::unit(legend.key.width, "mm")) + 
           ggplot2::labs(x = xaxis, y = value, colour = legendtitle) +
           ggplot2::scale_y_continuous(limits = c(0, 1)) # robust to splining
       )
@@ -91,7 +101,9 @@ plot_btvoccu <- function(model,
         plt +
           ggplot2::geom_line() +
           ggplot2::geom_ribbon(ggplot2::aes(ymin = Lower, ymax = Upper), alpha = .1, linetype = 2, show.legend = F) +
-          ggplot2::theme_classic() +
+          ggplot2::theme_classic(base_size = font.size) +
+          ggplot2::theme(legend.key.height = ggplot2::unit(legend.key.height, "mm"), 
+                         legend.key.width = ggplot2::unit(legend.key.width, "mm")) + 
           ggplot2::labs(x = xaxis, y = value, colour = legendtitle) +
           ggplot2::scale_y_continuous(limits = c(0, 1)) # robust to splining
       )
@@ -99,7 +111,9 @@ plot_btvoccu <- function(model,
       return(
         plt +
           ggplot2::geom_line() +
-          ggplot2::theme_classic() +
+          ggplot2::theme_classic(base_size = font.size) +
+          ggplot2::theme(legend.key.height = ggplot2::unit(legend.key.height, "mm"), 
+                         legend.key.width = ggplot2::unit(legend.key.width, "mm")) + 
           ggplot2::labs(x = xaxis, y = value, colour = legendtitle) +
           ggplot2::scale_y_continuous(limits = c(0, 1)) # robust to splining
       )

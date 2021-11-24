@@ -5,12 +5,11 @@
 set.seed(9142021)
 
 library(btvoccu)
-library(btvoccumaps)
 library(rgdal)
 library(gridExtra)
 library(magick)
 
-final <- readRDS("models/F for final/AF2-9142021.rds")
+final <- readRDS("models/AF2-9142021.rds")
 x <- readRDS("data/final-covariates.rds")
 x <- apply(x, 1:4, as.numeric)
 
@@ -76,11 +75,14 @@ b <- plot_btvoccu(final, x, sites, season, periods,
 c <- plot_btvoccu(final, x, sites, season, periods,
                   value = "Presence",
                   burnin = 1/6)
-d <- plot_btvoccu(final, x, moresites, season, periods,
-                  value = "Occupancy",
-                  burnin = 1/6,
-                  ribbons = F)
-grid.arrange(a, b, c, d, nrow = 2, ncol = 2) # save this
+# d <- plot_btvoccu(final, x, moresites, season, periods,
+#                   value = "Occupancy",
+#                   burnin = 1/6,
+#                   ribbons = F)
+gr <- arrangeGrob(a, b, c, nrow = 2, ncol = 2)
+ggsave("figures/rough2016v2.png", gr, 
+       width = 8.5 - 2 * 1, units = "in")
+# grid.arrange(a, b, c, d, nrow = 2, ncol = 2)
 
 
 # smoothed
@@ -96,24 +98,33 @@ c <- plot_btvoccu(final, x, sites, season, periods,
                   value = "Presence",
                   burnin = 1/6, 
                   spline = T)
-d <- plot_btvoccu(final, x, moresites, season, periods,
-                  value = "Occupancy",
-                  burnin = 1/6,
-                  spline = T,
-                  ribbons = F)
-grid.arrange(a, b, c, d, nrow = 2, ncol = 2) # save this
+# d <- plot_btvoccu(final, x, moresites, season, periods,
+#                   value = "Occupancy",
+#                   burnin = 1/6,
+#                   spline = T,
+#                   ribbons = F)
+gr <- arrangeGrob(a, b, c, nrow = 2, ncol = 2)
+ggsave("figures/smooth2016v2.png", gr, 
+       width = 8.5 - 2 * 1, units = "in")
+# grid.arrange(a, b, c, d, nrow = 2, ncol = 2)
 
 # covariates
-a <- plot_covariate(x, moresites, season, 20:40, "lag6gini.bird.simpson", "Bird Index (6 week lag)")
-b <- plot_covariate(x, moresites, season, 20:40, "lag6meantemp.wk", "Temperature (6 week lag)")
-c <- plot_covariate(x, moresites, season, 20:40, "lag2infected.neighbors", "Infected Neighbors (2 week lag)")
-d <- plot_covariate(x, moresites, season, 20:40, "lag6sqrt.level.avg.avg", "Water Level (6 week lag)")
-grid.arrange(b, c, d, a, nrow = 2, ncol = 2) # save this
+a <- plot_covariate(x, moresites, season, 20:40, "lag6gini.bird.simpson", "Bird Index (6 week lag)", font.size = 7)
+b <- plot_covariate(x, moresites, season, 20:40, "lag6meantemp.wk", "Temperature (6 week lag)", font.size = 7)
+c <- plot_covariate(x, moresites, season, 20:40, "lag2infected.neighbors", "Infected Neighbors (2 week lag)", font.size = 7)
+d <- plot_covariate(x, moresites, season, 20:40, "lag6sqrt.level.avg.avg", "Water Level (6 week lag)", font.size = 7)
+gr <- arrangeGrob(b, c, d, a, nrow = 2, ncol = 2)
+ggsave("figures/occueffs2016v2.png", gr, 
+       width = 8.5 - 2 * 1, units = "in")
+# grid.arrange(b, c, d, a, nrow = 2, ncol = 2)
 
-a <- plot_covariate(x, moresites, season, 20:40, "sqrt.X.surveys", "Survey Count (sqrt)")
-b <- plot_covariate(x, moresites, season, 20:40, "sqrt.Cx.prop", "Percent Culex (sqrt)")
-c <- plot_covariate(x, moresites, season, 20:40, "cbrt.catch.rate", "Catch Rate (cbrt)")
-grid.arrange(a, b, c, nrow = 2, ncol = 2) # save this
+a <- plot_covariate(x, moresites, season, 20:40, "sqrt.X.surveys", "Survey Count (sqrt)", font.size = 7)
+b <- plot_covariate(x, moresites, season, 20:40, "sqrt.Cx.prop", "Percent Culex (sqrt)", font.size = 7)
+c <- plot_covariate(x, moresites, season, 20:40, "cbrt.catch.rate", "Catch Rate (cbrt)", font.size = 7)
+gr <- arrangeGrob(a, b, c, nrow = 2, ncol = 2)
+ggsave("figures/deteffs2016v2.png", gr, 
+       width = 8.5 - 2 * 1, units = "in")
+# grid.arrange(a, b, c, nrow = 2, ncol = 2)
 
 # Maps --------------------------------------------------------------------
 
@@ -136,9 +147,11 @@ btvoccu_map_inset("figures/detmap.png",
                   phus, season, 34, latmax = 46)
 
 # covariates
-covariate_map_inset("figures/Covariates/maps/agri-inset.png",
-                    x, "sqrt.perc.agri", ontario, cities, phus,
-                    2017, 30, "Sqrt Percent Agricultural",
+covariate_map_inset("figures/agri-inset.png",
+                    x, "sqrt.perc.agri", 
+                    ontario, cities, 
+                    phus, 2017, 30, 
+                    "Sqrt Percent Agricultural",
                     latmax= 46)
 # covariate_map_inset("figures/Covariates/maps/urban-inset.png",
 #                     x, "sqrt.perc.urban", ontario, cities, phus,
@@ -148,8 +161,11 @@ covariate_map_inset("figures/Covariates/maps/agri-inset.png",
 # occupancy movie
 for(p in 20:40){
   btvoccu_map_inset(paste("figures/occu2016/frame", p, ".png", sep = ""),
-                          final, x, "Occupancy", 0.5, ontario, cities, phus, 
-                          season, p, latmax = 46)
+                    final, x, 
+                    "Occupancy", 0.5, 
+                    ontario, cities, 
+                    phus, season, p, 
+                    latmax = 46)
 }
 imgs <- list.files("figures/occu2016/", full.names = T)
 img_list <- lapply(imgs, image_read)
@@ -161,8 +177,11 @@ image_write(image = img_animated,
 # detection movie
 for(p in 20:40){
   btvoccu_map_inset(paste("figures/det2016/frame", p, ".png", sep = ""),
-                    final, x, "Detection", 0.5, ontario, cities, phus, 
-                    season, p, latmax = 46)
+                    final, x, 
+                    "Detection", 0.5, 
+                    ontario, cities, 
+                    phus, season, p,
+                    latmax = 46)
 }
 imgs <- list.files("figures/det2016/", full.names = T)
 img_list <- lapply(imgs, image_read)
@@ -174,8 +193,11 @@ image_write(image = img_animated,
 # presence movie
 for(p in 20:40){
   btvoccu_map_inset(paste("figures/pre2016/frame", p, ".png", sep = ""),
-                    final, x, "Presence", 0.5, ontario, cities, phus, 
-                    season, p, latmax = 46)
+                    final, x, 
+                    "Presence", 0.5, 
+                    ontario, cities, 
+                    phus, season, p, 
+                    latmax = 46)
 }
 imgs <- list.files("figures/pre2016/", full.names = T)
 img_list <- lapply(imgs, image_read)

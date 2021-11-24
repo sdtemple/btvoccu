@@ -21,7 +21,10 @@ plot_btvoccu(
   spline.predict = FALSE,
   nknots = 5,
   xaxis = "Period",
-  legendtitle = "Site"
+  legendtitle = "Site",
+  font.size = 8,
+  legend.key.width = 2,
+  legend.key.height = 0
 )
 }
 \arguments{
@@ -56,6 +59,12 @@ plot_btvoccu(
 \item{nknots}{see \code{smooth.spline()}}
 
 \item{xaxis}{character: x-axis label}
+
+\item{font.size}{see \code{theme_classic()}}
+
+\item{legend.key.width}{see \code{theme()}}
+
+\item{legend.key.height}{see \code{theme()}}
 
 \item{legendtile}{character: legend label}
 }

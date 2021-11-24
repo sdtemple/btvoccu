@@ -27,23 +27,41 @@
 #' @param title.size see \code{tmap::tm_layout()}
 #' @param legend.title.size see \code{tmap::tm_layout()}
 #' @param legend.text.size see \code{tmap::tm_layout()}
+#' @param xlab.size see \code{tmap::tm_xlab()}
+#' @param ylab.size see \code{tmap::tm_ylab()}
+#' @param dots.size see \code{tmap::tm_dots()}
+#' @param cities.text see \code{tmap::tm_text()}
+#' @param cities.just see \code{tmap::tm_text()}
+#' @param cities.size see \code{tmap::tm_text()}
+#' @param cities.col see \code{tmap::tm_text()}
 #'
 #' @return \code{tmap} object
 #'
 #' @export
 covariate_map_inset <- function(file, x, covariate,
-                                shape, cities, sites, 
-                                season, period, label,
+                                shape, cities, 
+                                sites, season, period, 
+                                label,
                                 latmax = 90, latmin = -90,
                                 longmax = 180, longmin = -180,
                                 palette = 'Reds',
-                                timestamp = F, seasononly = F,
-                                inset.x = .95, inset.y = .05, inset.width = .4,
+                                timestamp = F, 
+                                seasononly = F,
+                                inset.x = .95, 
+                                inset.y = .1, 
+                                inset.width = .35,
                                 legend.position = c('left','top'),
                                 title.position = c('right','top'),
                                 title.size = .8, 
                                 legend.title.size = .8, 
-                                legend.text.size = .6
+                                legend.text.size = .6,
+                                xlab.size = .8, 
+                                ylab.size = .8,
+                                dots.size = .04,
+                                cities.text = 'name', 
+                                cities.just = 'top',
+                                cities.size = .8, 
+                                cities.col = 'black'
                                 ){
 
   # organize data
@@ -87,6 +105,8 @@ covariate_map_inset <- function(file, x, covariate,
                           style = 'cont',
                           palette = palette) +
         tmap::tm_grid(lines = F) +
+        tmap::tm_xlab("Longitude", size = xlab.size) +
+        tmap::tm_ylab("Latitude", size = ylab.size) +
         tmap::tm_layout(title = season,
                         title.size = title.size,
                         title.position = title.position,
@@ -95,8 +115,9 @@ covariate_map_inset <- function(file, x, covariate,
                         legend.text.size = legend.text.size,
                         asp = 0) +
         tmap::tm_shape(focused.cities) +
-        tmap::tm_dots(size = .2, col = 'black') +
-        tmap::tm_text('name', just  = 'top', size = .6)
+        tmap::tm_dots(size = dots.size, col = cities.col) +
+        tmap::tm_text(cities.text, just  = cities.just, 
+                      size = cities.size, col = cities.col)
 
     } else{
       plt <- tmap::tm_shape(focused.shape) +
@@ -106,6 +127,8 @@ covariate_map_inset <- function(file, x, covariate,
                           style = 'cont',
                           palette = palette) +
         tmap::tm_grid(lines = F) +
+        tmap::tm_xlab("Longitude", size = xlab.size) +
+        tmap::tm_ylab("Latitude", size = ylab.size) +
         tmap::tm_layout(title = paste('Epiweek ', period, ', ', season, sep = ''),
                         title.size = title.size,
                         title.position = title.position,
@@ -114,8 +137,9 @@ covariate_map_inset <- function(file, x, covariate,
                         legend.text.size = legend.text.size,
                         asp = 0) +
         tmap::tm_shape(focused.cities) +
-        tmap::tm_dots(size = .2, col = 'black') +
-        tmap::tm_text('name', just  = 'top', size = .6)
+        tmap::tm_dots(size = dots.size, col = cities.col) +
+        tmap::tm_text(cities.text, just  = cities.just, 
+                      size = cities.size, col = cities.col)
     }
   } else{
     plt <- tmap::tm_shape(focused.shape) +
@@ -125,13 +149,16 @@ covariate_map_inset <- function(file, x, covariate,
                         style = 'cont',
                         palette = palette) +
       tmap::tm_grid(lines = F) +
+      tmap::tm_xlab("Longitude", size = xlab.size) +
+      tmap::tm_ylab("Latitude", size = ylab.size) +
       tmap::tm_layout(legend.position = legend.position,
                       legend.title.size = legend.title.size,
                       legend.text.size = legend.text.size,
                       asp = 0) +
       tmap::tm_shape(focused.cities) +
-      tmap::tm_dots(size = .2, col = 'black') +
-      tmap::tm_text('name', just = 'top', size = .6)
+      tmap::tm_dots(size = dots.size, col = cities.col) +
+      tmap::tm_text(cities.text, just = cities.just, 
+                    size = cities.size, col = cities.col)
   }
 
   # inset tmap object
@@ -153,10 +180,11 @@ covariate_map_inset <- function(file, x, covariate,
                        height = h,
                        just = c("right", "bottom"))
 
+  # saving
   tmap::tmap_save(plt, file,
                   insets_tm = inset, 
                   insets_vp = vp,
-                  height = tmaptools::get_asp_ratio(plt)*5,
-                  width=5,
-                  units="in")
+                  height = tmaptools::get_asp_ratio(plt) * 5,
+                  width = 8.5 - 2 * 1,
+                  units = "in")
 }

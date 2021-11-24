@@ -26,18 +26,39 @@
 #' @param title.size see \code{tmap::tm_layout()}
 #' @param legend.title.size see \code{tmap::tm_layout()}
 #' @param legend.text.size see \code{tmap::tm_layout()}
+#' @param xlab.size see \code{tmap::tm_xlab()}
+#' @param ylab.size see \code{tmap::tm_ylab()}
+#' @param dots.size see \code{tmap::tm_dots()}
+#' @param cities.text see \code{tmap::tm_text()}
+#' @param cities.just see \code{tmap::tm_text()}
+#' @param cities.size see \code{tmap::tm_text()}
+#' @param cities.col see \code{tmap::tm_text()}
 #'
 #' @return \code{tmap} object
 #'
 #' @export
-btvoccu_map_inset <- function(file, model, x, value, q,
-                              shape, cities, sites, season, period,
+btvoccu_map_inset <- function(file, model, x, 
+                              value, q,
+                              shape, cities, 
+                              sites, season, period,
                               latmax = 90, latmin = -90,
                               longmax = 180, longmin = -180,
                               palette = 'Reds', 
-                              inset.x = .95, inset.y = .05, inset.width = .4,
-                              legend.position = c('left','top'), title.position  = c('right','top'),
-                              title.size = .8, legend.title.size = .8, legend.text.size = .6
+                              inset.x = .95, 
+                              inset.y = .1, 
+                              inset.width = .35,
+                              legend.position = c('left','top'), 
+                              title.position  = c('right','top'),
+                              title.size = .8, 
+                              legend.title.size = .8, 
+                              legend.text.size = .6,
+                              xlab.size = .8, 
+                              ylab.size = .8,
+                              dots.size = .04,
+                              cities.text = 'name', 
+                              cities.just = 'top',
+                              cities.size = .8, 
+                              cities.col = 'black'
                               ){
 
   # organize data
@@ -85,9 +106,12 @@ btvoccu_map_inset <- function(file, model, x, value, q,
                     legend.title.size = legend.title.size,
                     legend.text.size = legend.text.size,
                     asp = 0) +
+    tmap::tm_xlab("Longitude", size = xlab.size) +
+    tmap::tm_ylab("Latitude", size = ylab.size) +
     tmap::tm_shape(focused.cities) +
-    tmap::tm_dots(size = .2, col = 'black') +
-    tmap::tm_text('name', just = 'top', size = .6)
+    tmap::tm_dots(size = dots.size, col = cities.col) +
+    tmap::tm_text(cities.text, just = cities.just, 
+                  size = cities.size, col = cities.col)
 
   # inset tmap object
   inset <- tmap::tm_shape(merged.shape) +
@@ -102,18 +126,17 @@ btvoccu_map_inset <- function(file, model, x, value, q,
   # define viewport and manage aspect ratio
   w <- inset.width
   h <- tmaptools::get_asp_ratio(inset) * inset.width
-  vp <- grid::viewport(x= inset.x,
-                       y= inset.y,
+  vp <- grid::viewport(x = inset.x,
+                       y = inset.y,
                        width = w,
-                       height=h,
-                       just=c("right", "bottom")
-                       )
+                       height = h,
+                       just = c("right", "bottom"))
 
   # saving
   tmap::tmap_save(plt, file,
                   insets_tm = inset,
                   insets_vp = vp,
                   height = tmaptools::get_asp_ratio(plt) * 5,
-                  width = 5,
+                  width = 8.5 - 2 * 1,
                   units = "in")
 }

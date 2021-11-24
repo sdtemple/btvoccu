@@ -22,26 +22,58 @@
 #' @param title.size see \code{tmap::tm_layout()}
 #' @param legend.title.size see \code{tmap::tm_layout()}
 #' @param legend.text.size see \code{tmap::tm_layout()}
+#' @param xlab.size see \code{tmap::tm_xlab()}
+#' @param ylab.size see \code{tmap::tm_ylab()}
+#' @param dots.size see \code{tmap::tm_dots()}
+#' @param cities.text see \code{tmap::tm_text()}
+#' @param cities.just see \code{tmap::tm_text()}
+#' @param cities.size see \code{tmap::tm_text()}
+#' @param cities.col see \code{tmap::tm_text()}
 #'
 #' @return movie of \code{tmap} objects
 #'
 #' @export
 btvoccu_movie <- function(file, directory, fps,
-                          model, x, value, q,
-                          shape, cities, sites, season, period,
+                          model, x, 
+                          value, q,
+                          shape, cities, 
+                          sites, season, period,
                           palette = 'Reds',
-                          legend.position = c('left','top'), title.position  = c('right','top'),
-                          title.size = .8, legend.title.size = .8, legend.text.size = .6
+                          legend.position = c('left','top'), 
+                          title.position  = c('right','top'),
+                          title.size = .8, 
+                          legend.title.size = .8, 
+                          legend.text.size = .6,
+                          xlab.size = .8, 
+                          ylab.size = .8,
+                          dots.size = .04,
+                          cities.text = 'name', 
+                          cities.just = 'top',
+                          cities.size = .7, 
+                          cities.col = 'black'
                           ){
                                 
   
   # make multiple maps
   for(p in periods){
     btvoccu_map(paste(directory, "period", p, ".png", sep = ""), # store in directory
-                model, x, value, q, ontario, cities, sites, 
-                season, p, palette, legend.position, 
-                title.position, title.size, 
-                legend.title.size, legend.text.size)                    
+                model, x, 
+                value, q, 
+                shape, cities, 
+                sites, season, p, 
+                palette, 
+                legend.position, 
+                title.position, 
+                title.size, 
+                legend.title.size, 
+                legend.text.size,
+                xlab.size, 
+                ylab.size,
+                dots.size,
+                cities.text, 
+                cities.just,
+                cities.size, 
+                cities.col)                    
   }
   # animate with magick package
   imgs <- list.files(directory, full.names = T)

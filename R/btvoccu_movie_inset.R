@@ -28,29 +28,67 @@
 #' @param title.size see \code{tmap::tm_layout()}
 #' @param legend.title.size see \code{tmap::tm_layout()}
 #' @param legend.text.size see \code{tmap::tm_layout()}
+#' @param xlab.size see \code{tmap::tm_xlab()}
+#' @param ylab.size see \code{tmap::tm_ylab()}
+#' @param dots.size see \code{tmap::tm_dots()}
+#' @param cities.text see \code{tmap::tm_text()}
+#' @param cities.just see \code{tmap::tm_text()}
+#' @param cities.size see \code{tmap::tm_text()}
+#' @param cities.col see \code{tmap::tm_text()}
 #'
 #' @return movie of \code{tmap} objects
 #'
 #' @export
 btvoccu_movie_inset <- function(file, directory, fps,
-                                model, x, value, q,
-                                shape, cities, sites, season, period,
+                                model, x, 
+                                value, q,
+                                shape, cities, 
+                                sites, season, period,
                                 latmax = 90, latmin = -90,
                                 longmax = 180, longmin = -180,
                                 palette = 'Reds', 
-                                inset.x = .95, inset.y = .05, inset.width = .4,
-                                legend.position = c('left','top'), title.position  = c('right','top'),
-                                title.size = .8, legend.title.size = .8, legend.text.size = .6
+                                inset.x = .95, 
+                                inset.y = .1, 
+                                inset.width = .35,
+                                legend.position = c('left','top'),
+                                title.position  = c('right','top'),
+                                title.size = .8, 
+                                legend.title.size = .8, 
+                                legend.text.size = .6,
+                                xlab.size = .8, 
+                                ylab.size = .8,
+                                dots.size = .04,
+                                cities.text = 'name', 
+                                cities.just = 'top',
+                                cities.size = .8, 
+                                cities.col = 'black'
                                 ){
                               
   # make multiple maps
   for(p in periods){
     btvoccu_map_inset(paste(directory, "period", p, ".png", sep = ""), # store in directory
-                      model, x, value, q, ontario, cities, sites, 
-                      season, p, latmax, latmin, longmax, longmin,
-                      palette, inset.x, inset.y, inset.width, 
-                      legend.position, title.position, title.size, 
-                      legend.title.size, legend.text.size)    
+                      model, x, 
+                      value, q, 
+                      shape, cities, 
+                      sites, season, p, 
+                      latmax, latmin, 
+                      longmax, longmin,
+                      palette, 
+                      inset.x, 
+                      inset.y, 
+                      inset.width, 
+                      legend.position, 
+                      title.position, 
+                      title.size, 
+                      legend.title.size, 
+                      legend.text.size,
+                      xlab.size, 
+                      ylab.size,
+                      dots.size,
+                      cities.text, 
+                      cities.just,
+                      cities.size, 
+                      cities.col)    
   }
                                
   # animate with magick package
